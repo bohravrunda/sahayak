@@ -2,25 +2,23 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { MailModule } from './mail/mail.module';
 import { AuthModule } from './auth/auth.module';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './auth/entities/user.entity';
+import * as admin from 'firebase-admin';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }), // loads .env globally
-    TypeOrmModule.forRoot({
-      // your DB config
-      type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'postgres',
-      password: 'password',
-      database: 'testdb',
-      entities: [User],
-      synchronize: true,
-    }),
+    ConfigModule.forRoot({ isGlobal: true }),
     AuthModule,
     MailModule,
   ],
 })
-export class AppModule {}
+export class AppModule {
+  constructor() {
+    admin.initializeApp({
+      credential: admin.credential.cert({
+        projectId: process.env.FIREBASE_PROJECT_ID!,
+        clientEmail: process.env.FIREBASE_CLIENT_EMAIL!,
+        privateKey: (process.env.FIREBASE_PRIVATE_KEY || '').replace(/\\n/g, '\n'),
+      }),
+    });
+  }
+}
