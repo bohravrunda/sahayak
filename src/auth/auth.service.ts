@@ -1,48 +1,67 @@
-// src/auth/auth.service.ts
-import { Injectable, ConflictException, NotFoundException, BadRequestException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { User } from './entities/user.entity';
-import { RegisterDto } from './dto/register.dto';
-import * as bcrypt from 'bcrypt';
-import { randomBytes } from 'crypto';
-import { MailService } from '../mail/mail.service';
+import { Injectable, BadRequestException } from '@nestjs/common';
+import { FirebaseService } from '../firebase/firebase.service';
+import { SendOtpDto } from './dto/send-otp.dto';
+import { VerifyOtpDto } from './dto/verify-otp.dto';
+import { CompleteRegisterDto } from './dto/complete-register.dto';
 
 @Injectable()
 export class AuthService {
-  constructor(
-    @InjectRepository(User)
-    private userRepo: Repository<User>,
-    private mailService: MailService,
-  ) {}
+  constructor(private readonly firebaseService: FirebaseService) {}
 
-  async register(dto: RegisterDto) {
-    const existing = await this.userRepo.findOne({ where: { email: dto.email } });
-    if (existing) throw new ConflictException('Email already exists');
+  async sendOtp(dto: SendOtpDto) {
+    const db = this.firebaseService.getDb();
+    const otp = Math.floor(100000 + Math.random() * 900000).toString(); // 6 digit OTP
 
-    const hashedPassword = await bcrypt.hash(dto.password, 10);
-    const verificationToken = randomBytes(32).toString('hex');
-
-    const user = this.userRepo.create({
-      email: dto.email,
-      password: hashedPassword,
-      verificationToken,
+    await db.collection('otp_verifications').doc(dto.email).set({
+      name: dto.name,
+      otp,
+      createdAt: new Date(),
+      verified: false,
     });
 
-    await this.userRepo.save(user);
-    await this.mailService.sendVerificationEmail(user.email, verificationToken);
+    // TODO: Send OTP to email using nodemailer or any email service
+    console.log(`OTP for ${dto.email}: ${otp}`);
 
-    return { message: 'User registered. Check your email to verify.' };
+    return { message: 'OTP sent to email' };
   }
 
-  async verifyEmail(token: string) {
-    const user = await this.userRepo.findOne({ where: { verificationToken: token } });
-    if (!user) throw new NotFoundException('Invalid verification token');
+  async verifyOtp(dto: VerifyOtpDto) {
+    const db = this.firebaseService.getDb();
+    const record = await db.collection('otp_verifications').doc(dto.email).get();
 
-    user.isEmailVerified = true;
-    user.verificationToken = null;
+    if (!record.exists) throw new BadRequestException('No OTP found for this email');
+    const data = record.data();
 
-    await this.userRepo.save(user);
-    return { message: 'Email verified successfully' };
+    if (data?.otp !== dto.verificationCode) {
+      throw new BadRequestException('Invalid OTP');
+    }
+
+    await db.collection('otp_verifications').doc(dto.email).update({
+      verified: true,
+    });
+
+    return { message: 'OTP verified successfully' };
+  }
+
+  async completeRegistration(dto: CompleteRegisterDto) {
+    const db = this.firebaseService.getDb();
+    const otpRecord = await db.collection('otp_verifications').doc(dto.email).get();
+
+    if (!otpRecord.exists || !otpRecord.data()?.verified) {
+      throw new BadRequestException('OTP not verified');
+    }
+
+    // Save user in users collection
+    await db.collection('users').doc(dto.email).set({
+      name: otpRecord.data()?.name,
+      email: dto.email,
+      password: dto.password, // 🔒 Ideally hash this with bcrypt before storing
+      createdAt: new Date(),
+    });
+
+    // Delete OTP record after registration
+    await db.collection('otp_verifications').doc(dto.email).delete();
+
+    return { message: 'Registration completed successfully' };
   }
 }
