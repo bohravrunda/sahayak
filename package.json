@@ -1,5 +1,9 @@
 {
   "devDependencies": {
     "@react-native-community/cli": "^20.0.2"
+  },
+  "dependencies": {
+    "@react-navigation/native-stack": "^7.3.27",
+    "axios": "^1.12.2"
   }
 }
