@@ -1,138 +1,83 @@
-import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator } from "react-native";
-import colors from "./components/navigation/config/utils/colors";
-import { users } from "../AppGlobals";
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import Feather from 'react-native-vector-icons/Feather';
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import colors from '../styles/colors';
 
+export default function LoginScreen({ navigation }) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
-const LoginScreen = ({ navigation }) => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
+  const handleLogin = () => {
+    navigation.navigate('Dashboard');
+  };
 
-  const handleLogin = async () => {
-    if (!email || !password) {
-      Alert.alert("Error", "Please fill all fields");
-      return;
-    }
-
-    setLoading(true);
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      const user = users.find(u => u.email === email && u.password === password);
-      if (user) {
-        Alert.alert("Success", `Welcome ${user.name}!`);
-      } else {
-        Alert.alert("Error", "Invalid credentials. Try again.");
-      }
-    } catch (err) {
-      Alert.alert("Error", "Login failed. Please try again.");
-    } finally {
-      setLoading(false);
-    }
+  const handleGoogleLogin = () => {
+    navigation.navigate('Dashboard');
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Login</Text>
-      <Text style={styles.subtitle}>Enter your account details</Text>
+      <Text style={styles.title}>Login to Sahaayak</Text>
 
-      <View style={styles.inputWrapper}>
-        <FontAwesome name="user" size={20} color={colors.gray} style={styles.icon} />
-        <TextInput
-          placeholder="Email"
-          style={[styles.input, { paddingLeft: 40 }]}
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-        />
-      </View>
+      <TextInput
+        style={styles.input}
+        placeholder="Email"
+        placeholderTextColor="#999"
+        value={email}
+        onChangeText={setEmail}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Password"
+        placeholderTextColor="#999"
+        value={password}
+        onChangeText={setPassword}
+        secureTextEntry
+      />
 
-      <View style={styles.inputWrapper}>
-        <TextInput
-          placeholder="Password"
-          style={[styles.input, { paddingRight: 40 }]}
-          secureTextEntry={!showPassword}
-          value={password}
-          onChangeText={setPassword}
+      <TouchableOpacity style={styles.loginBtn} onPress={handleLogin}>
+        <Text style={styles.loginText}>Login</Text>
+      </TouchableOpacity>
+
+      {/* Official Google Button */}
+      <TouchableOpacity style={styles.googleButton} onPress={handleGoogleLogin}>
+        <Image
+          source={{ uri: 'https://developers.google.com/identity/images/g-logo.png' }}
+          style={styles.googleIcon}
         />
-        <TouchableOpacity style={styles.eyeIcon} onPress={() => setShowPassword(!showPassword)}>
-          <Feather name={showPassword ? "eye-off" : "eye"} size={20} color={colors.gray} />
+        <Text style={styles.googleText}>Sign in with Google</Text>
+      </TouchableOpacity>
+
+      <View style={styles.linksContainer}>
+        <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
+          <Text style={styles.linkText}>Register</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('Email')}>
+          <Text style={styles.linkText}>Forgot Password?</Text>
         </TouchableOpacity>
       </View>
-
-      <TouchableOpacity style={styles.button} onPress={handleLogin} disabled={loading}>
-        {loading ? <ActivityIndicator color={colors.white} /> : <Text style={styles.buttonText}>Login</Text>}
-      </TouchableOpacity>
-
-      <TouchableOpacity onPress={() => navigation.navigate("Signup")}>
-        <Text style={styles.link}>Don't have an account? Sign Up</Text>
-      </TouchableOpacity>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 20,
-  },
-  title: {
-    fontSize: 28,
-    color: colors.primary,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-  subtitle: {
-    color: colors.text,
-    marginBottom: 30,
-  },
-  inputWrapper: {
-    width: "90%",
-    position: "relative",
-    marginVertical: 8,
-  },
-  input: {
-    width: "100%",
+  container: { flex: 1, backgroundColor: colors.background, justifyContent: 'center', padding: 25 },
+  title: { fontSize: 28, fontWeight: 'bold', marginBottom: 30, color: colors.primary, textAlign: 'center' },
+  input: { borderWidth: 1, borderColor: colors.gray, borderRadius: 10, padding: 12, marginBottom: 15, backgroundColor: colors.white },
+  loginBtn: { backgroundColor: colors.primary, padding: 15, borderRadius: 10, alignItems: 'center', marginTop: 5 },
+  loginText: { color: colors.white, fontSize: 18, fontWeight: 'bold' },
+  googleButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: colors.white,
-    borderRadius: 10,
-    padding: 12,
-    borderWidth: 1,
-    borderColor: colors.gray,
-  },
-  icon: {
-    position: "absolute",
-    left: 10,
-    top: 12,
-  },
-  eyeIcon: {
-    position: "absolute",
-    right: 10,
-    top: 12,
-  },
-  button: {
-    backgroundColor: colors.primary,
-    padding: 15,
-    borderRadius: 10,
-    width: "90%",
-    alignItems: "center",
+    borderRadius: 8,
+    paddingVertical: 12,
+    justifyContent: 'center',
     marginTop: 15,
+    borderWidth: 1,
+    borderColor: '#ddd',
   },
-  buttonText: {
-    color: colors.white,
-    fontWeight: "bold",
-    fontSize: 16,
-  },
-  link: {
-    marginTop: 20,
-    color: colors.accent,
-    fontSize: 14,
-  },
+  googleIcon: { width: 24, height: 24, marginRight: 10 },
+  googleText: { fontSize: 16, color: '#000', fontWeight: '500' },
+  linksContainer: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 25 },
+  linkText: { color: colors.primary, fontWeight: 'bold' },
 });
-
-export default LoginScreen;
