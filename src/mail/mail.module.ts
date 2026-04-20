@@ -3,7 +3,9 @@ import { MailService } from './mail.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
-  imports: [ConfigModule],
+  imports: [
+    ConfigModule.forRoot({ isGlobal: true }), // Ensures ConfigService works everywhere
+  ],
   providers: [
     MailService,
     {
@@ -20,6 +22,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       }),
     },
   ],
-  exports: [MailService],
+  exports: [
+    MailService,  
+    'MAIL_TRANSPORT',   // Optional but useful if needed outside
+  ],
 })
 export class MailModule {}

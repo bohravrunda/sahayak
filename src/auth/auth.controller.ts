@@ -43,12 +43,13 @@ export class AuthController {
     try {
       await this.authService.signup(dto.name, dto.email);
       return { ok: true, message: 'OTP sent to email' };
-    } catch (err) {
-      throw new HttpException(
-        err.message || 'Signup failed',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
+    } catch (err: unknown) {
+  if (err instanceof Error) {
+    throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
+  }
+  throw new HttpException('Something went wrong', HttpStatus.BAD_REQUEST);
+}
+
   }
 
   // --------------------- VERIFY OTP ---------------------
@@ -57,12 +58,13 @@ export class AuthController {
     try {
       const res = await this.authService.verifyOtp(dto.email, dto.otp);
       return { ok: true, message: 'OTP verified', token: res.token };
-    } catch (err) {
-      throw new HttpException(
-        err.message || 'OTP verification failed',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
+    } catch (err: unknown) {
+  if (err instanceof Error) {
+    throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
+  }
+  throw new HttpException('Something went wrong', HttpStatus.BAD_REQUEST);
+}
+
   }
 
   // --------------------- SET PASSWORD ---------------------
@@ -89,12 +91,13 @@ export class AuthController {
       await this.authService.setPassword(email, dto.password);
 
       return { ok: true, message: 'Password set successfully' };
-    } catch (err) {
-      throw new HttpException(
-        err.message || 'Setting password failed',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
+    } catch (err: unknown) {
+  if (err instanceof Error) {
+    throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
+  }
+  throw new HttpException('Something went wrong', HttpStatus.BAD_REQUEST);
+}
+
   }
 
   // --------------------- LOGIN ---------------------
@@ -103,12 +106,13 @@ export class AuthController {
     try {
       const res = await this.authService.login(dto.email, dto.password);
       return { ok: true, ...res };
-    } catch (err) {
-      throw new HttpException(
-        err.message || 'Login failed',
-        HttpStatus.UNAUTHORIZED,
-      );
-    }
+    } catch (err: unknown) {
+  if (err instanceof Error) {
+    throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
+  }
+  throw new HttpException('Something went wrong', HttpStatus.BAD_REQUEST);
+}
+
   }
 
   // --------------------- FORGOT PASSWORD ---------------------

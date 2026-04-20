@@ -1,0 +1,9 @@
+@nestjs/config
+bcryptjs
+jsonwebtoken
+class-validator
+firebase-admin
+nodemailer
+@types/bcryptjs
+@types/jsonwebtoken
+@types/nodemailer

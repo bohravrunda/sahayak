@@ -12,12 +12,12 @@ export class SetPasswordDto {
   @Matches(/(?=.*\d)/, {
     message: 'Password must contain at least one number',
   })
-  @Matches(/(?=.[@$!%?&])/, {
+  @Matches(/(?=.*[@$!%*?&])/, {
     message: 'Password must contain at least one special character (@$!%*?&)',
   })
-  password: string;
+  password!: string;
 
   @IsString()
   @IsNotEmpty({ message: 'Confirm Password is required' })
-  confirmPassword: string;
+  confirmPassword!: string;
 }
