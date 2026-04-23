@@ -4,6 +4,7 @@ import { MailService } from '../mail/mail.service';
 import * as crypto from 'crypto';
 import * as bcrypt from 'bcryptjs';
 import * as jwt from 'jsonwebtoken';
+import { OAuth2Client } from 'google-auth-library';
 
 @Injectable()
 export class AuthService {
@@ -16,6 +17,72 @@ export class AuthService {
     private readonly mail: MailService
   ) {}
 
+
+    // ✅ ---------------- GOOGLE MOBILE LOGIN (FIXED) ----------------
+async verifyGoogleToken(idToken: string) {
+  const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+  const ticket = await client.verifyIdToken({
+    idToken,
+    audience: process.env.GOOGLE_CLIENT_ID,
+  });
+
+  const payload = ticket.getPayload();
+
+  if (!payload || !payload.email) {
+    throw new Error('Invalid Google token');
+  }
+
+  const emailNorm = payload.email.toLowerCase();
+  const db = this.firebase.firestore;
+
+  // ================= USERS COLLECTION =================
+  const userRef = db.collection('users').doc(emailNorm);
+  const userSnap = await userRef.get();
+
+  if (!userSnap.exists) {
+    await userRef.set({
+      name: payload.name,
+      email: emailNorm,
+      picture: payload.picture,
+      createdAt: new Date(),
+      emailVerified: true,
+    });
+  }
+
+  // ================= PROFILES COLLECTION (🔥 FIX) =================
+  const profileRef = db.collection('profiles').doc(emailNorm);
+  const profileSnap = await profileRef.get();
+
+  if (!profileSnap.exists) {
+    await profileRef.set({
+      name: payload.name || "",
+      email: emailNorm,
+      picture: payload.picture || "",
+      phone: "",
+      address: "",
+      createdAt: new Date(),
+    });
+  }
+
+  // ================= JWT =================
+  const jwtSecret = process.env.JWT_SECRET;
+  if (!jwtSecret) throw new Error('JWT_SECRET not defined');
+
+  const token = jwt.sign({ email: emailNorm }, jwtSecret, {
+    expiresIn: '1h',
+  });
+
+  return {
+    message: 'Google login success',
+    token,
+    user: {
+      name: payload.name,
+      email: emailNorm,
+      picture: payload.picture,
+    },
+  };
+}
   // --------------------- GOOGLE LOGIN ---------------------
   async handleGoogleLogin(user: any) {
     if (!user) {
@@ -297,3 +364,5 @@ export class AuthService {
     return { ok: true, message: 'Password reset successful.' };
   }
 }
+
+

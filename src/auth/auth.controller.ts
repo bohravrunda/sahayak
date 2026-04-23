@@ -23,99 +23,74 @@ import { AuthGuard } from '@nestjs/passport';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  // --------------------- GOOGLE OAUTH ---------------------
+  // ---------------- GOOGLE WEB LOGIN ----------------
   @Get('google')
   @UseGuards(AuthGuard('google'))
-  async googleAuth(@Req() req) {
-    // Redirects to Google OAuth login
-  }
+  async googleAuth(@Req() req) {}
 
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
   googleAuthRedirect(@Req() req) {
-    // req.user contains Google profile
     return this.authService.handleGoogleLogin(req.user);
   }
 
-  // --------------------- SIGNUP ---------------------
+  // ---------------- GOOGLE MOBILE LOGIN (🔥 FIX) ----------------
+  @Post('google/mobile-login')
+  async googleMobileLogin(@Body() body: { idToken: string }) {
+    try {
+      if (!body.idToken) {
+        throw new HttpException('No ID token provided', HttpStatus.BAD_REQUEST);
+      }
+
+      return await this.authService.verifyGoogleToken(body.idToken);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
+      }
+      throw new HttpException('Google login failed', HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  // ---------------- SIGNUP ----------------
   @Post('signup')
   async signup(@Body() dto: SignupDto) {
-    try {
-      await this.authService.signup(dto.name, dto.email);
-      return { ok: true, message: 'OTP sent to email' };
-    } catch (err: unknown) {
-  if (err instanceof Error) {
-    throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
-  }
-  throw new HttpException('Something went wrong', HttpStatus.BAD_REQUEST);
-}
-
+    await this.authService.signup(dto.name, dto.email);
+    return { ok: true, message: 'OTP sent to email' };
   }
 
-  // --------------------- VERIFY OTP ---------------------
+  // ---------------- VERIFY OTP ----------------
   @Post('verify-otp')
   async verifyOtp(@Body() dto: VerifyOtpDto) {
-    try {
-      const res = await this.authService.verifyOtp(dto.email, dto.otp);
-      return { ok: true, message: 'OTP verified', token: res.token };
-    } catch (err: unknown) {
-  if (err instanceof Error) {
-    throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
-  }
-  throw new HttpException('Something went wrong', HttpStatus.BAD_REQUEST);
-}
-
+    const res = await this.authService.verifyOtp(dto.email, dto.otp);
+    return { ok: true, token: res.token };
   }
 
-  // --------------------- SET PASSWORD ---------------------
+  // ---------------- SET PASSWORD ----------------
   @Post('set-password')
   async setPassword(
     @Body() dto: SetPasswordDto,
     @Headers('authorization') authHeader: string,
   ) {
-    try {
-      if (!authHeader) {
-        throw new HttpException('No token provided', HttpStatus.UNAUTHORIZED);
-      }
+    if (!authHeader) {
+      throw new HttpException('No token provided', HttpStatus.UNAUTHORIZED);
+    }
 
-      if (dto.password !== dto.confirmPassword) {
-        throw new HttpException(
-          'Password and Confirm Password do not match',
-          HttpStatus.BAD_REQUEST,
-        );
-      }
+    const token = authHeader.replace('Bearer ', '');
+    const email = this.authService.verifyJwt(token);
 
-      const token = authHeader.replace('Bearer ', '');
-      const email = this.authService.verifyJwt(token);
+    await this.authService.setPassword(email, dto.password);
 
-      await this.authService.setPassword(email, dto.password);
-
-      return { ok: true, message: 'Password set successfully' };
-    } catch (err: unknown) {
-  if (err instanceof Error) {
-    throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
-  }
-  throw new HttpException('Something went wrong', HttpStatus.BAD_REQUEST);
-}
-
+    return { ok: true, message: 'Password set successfully' };
   }
 
-  // --------------------- LOGIN ---------------------
+  // ---------------- LOGIN ----------------
   @Post('login')
   async login(@Body() dto: LoginDto) {
-    try {
-      const res = await this.authService.login(dto.email, dto.password);
-      return { ok: true, ...res };
-    } catch (err: unknown) {
-  if (err instanceof Error) {
-    throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
-  }
-  throw new HttpException('Something went wrong', HttpStatus.BAD_REQUEST);
-}
-
+    const res = await this.authService.login(dto.email, dto.password);
+    return res;
   }
 
-  // --------------------- FORGOT PASSWORD ---------------------
+  // ---------------- FORGOT PASSWORD ----------------
   @Post('forgot-password')
   async forgotPassword(@Body() dto: ForgotPasswordDto) {
     return this.authService.forgotPassword(dto.email);
@@ -129,5 +104,5 @@ export class AuthController {
   @Post('reset-password')
   async resetPassword(@Body() dto: ResetPasswordDto) {
     return this.authService.resetPassword(dto.email, dto.newPassword);
-  }
+  }
 }

@@ -6,6 +6,8 @@ import { FirebaseModule } from './firebase/firebase.module';
 import { MailModule } from './mail/mail.module';
 import { ProfileModule } from './profile/profile.module';
 import { SettingsModule } from './settings/settings.module';
+import { EmergencyModule } from './emergency/emergency.module';
+
 
 
 @Module({
@@ -17,6 +19,7 @@ import { SettingsModule } from './settings/settings.module';
     ProfileModule,
     MailModule,
         SettingsModule, // 🔥 ADD THIS
+        EmergencyModule
 
   ],
 })
