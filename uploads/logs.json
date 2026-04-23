@@ -1,0 +1,66 @@
+[
+  {
+    "time": "2026-04-23 06:54:15.732049",
+    "file": "uploads/audio_31320b67d907422ea17a367b1d938e94.wav",
+    "text": "",
+    "language": "nn",
+    "emergency": false,
+    "keyword": null
+  },
+  {
+    "time": "2026-04-23 06:54:48.884818",
+    "file": "uploads/audio_6bec2c930ce54f9882ef6a4bbcb7ac03.wav",
+    "text": "hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello, hello",
+    "language": "en",
+    "emergency": false,
+    "keyword": null
+  },
+  {
+    "time": "2026-04-23 06:55:19.810065",
+    "file": "uploads/audio_afc724d1fad649aba65479a0050a426b.wav",
+    "text": "",
+    "language": "ar",
+    "emergency": false,
+    "keyword": null
+  },
+  {
+    "time": "2026-04-23 06:55:43.880124",
+    "file": "uploads/audio_873b0a6fdb8b4ba099cd05720d39e11b.wav",
+    "text": "help, help, help, help, help, help, help, help, help, help, help, emergency, emergency help, save me, help.",
+    "language": "en",
+    "emergency": true,
+    "keyword": "help"
+  },
+  {
+    "time": "2026-04-23 06:56:59.407506",
+    "file": "uploads/audio_7056f45b361c431c8e32a50ebf0644cd.wav",
+    "text": "1 2 2 3 4 4 3 4 3 4 3 4 3 4 3 4 4 4 9 9 9 9 9 9 9 9 9 9 9",
+    "language": "nn",
+    "emergency": false,
+    "keyword": null
+  },
+  {
+    "time": "2026-04-23 06:57:26.398798",
+    "file": "uploads/audio_feb97539b76d4cbab1d78a787eab01ec.wav",
+    "text": "",
+    "language": "nn",
+    "emergency": false,
+    "keyword": null
+  },
+  {
+    "time": "2026-04-23 06:57:55.354595",
+    "file": "uploads/audio_ead9155183d0401a90e2bac37c8fa128.wav",
+    "text": "",
+    "language": "nn",
+    "emergency": false,
+    "keyword": null
+  },
+  {
+    "time": "2026-04-23 06:58:47.830708",
+    "file": "uploads/audio_0bf27bee546e44cca9f6f2517949651f.wav",
+    "text": "",
+    "language": "nn",
+    "emergency": false,
+    "keyword": null
+  }
+]
