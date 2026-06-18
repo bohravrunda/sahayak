@@ -62,5 +62,84 @@
     "language": "nn",
     "emergency": false,
     "keyword": null
+  },
+  {
+    "time": "2026-04-23 19:41:04.913663",
+    "file": "uploads/audio_96cfc9f757a24acfb64b8f9f6d272db6.wav",
+    "text": "help help help help help help huzumda help help help help mi sevmi altyavul satt\u0131 pa\u00e7al",
+    "language": "tr",
+    "emergency": true,
+    "keyword": "help"
+  },
+  {
+    "time": "2026-04-30 12:17:12.622155",
+    "file": "uploads/audio_44c82430d3a741a4aad1a3ddda40b7b1.wav",
+    "text": "hello, hello, hello, hello, hello hello, hello, hello, hello hell, hell, hell, hell please come with your emotion, let it be please come. i'm too much on this earth.",
+    "language": "hi",
+    "emergency": false,
+    "keyword": null
+  },
+  {
+    "time": "2026-04-30 12:18:09.576846",
+    "file": "uploads/audio_0dbdb33dae9b44f4a17266126449b849.wav",
+    "text": "\u092a\u094b\u0938\u094d\u0935\u094b\u0924\u0924\u094d\u0926\u0947 \u0939\u0948\u0902? \u0917\u0930 \u0938\u093e\u0932\u0924\u0947\u0930\u093e? \u0915\u094d\u092f\u093e \u0906\u0926\u0928\u0935\u0932\u094d\u0935\u093c\u094b\u0936\u094d\u0926\u0947 \u0906\u0926 \u0906\u0926 \u092f\u0939\u0947\u0902 \u0915\u094d\u091a \u0935\u093c\u093e\u093c \u0939\u094b\u0924\u094d\u091a\u093c\u0947 \u0939\u0926\u0942\u0924\u094d\u0926\u0947 \u0939\u0948 \u0915\u094d\u092f\u093e \u0906\u0926\u0928\u093e \u0939\u0948\u0902? \u092a\u093e\u0926\u0940 \u0906\u0926\u093c\u093e \u0915\u094d\u092f\u093e \u0906\u0926\u0924\u094d\u0926\u0947 \u0939\u0948? \u0926\u0920\u0947 \u0905\u0926 \u0935\u094d\u093c\u094b\u0937\u093f\u0924 \u092d\u0942\u0938\u094d\u0935\u0953\u0924\u094d\u0926\u094d\u0926\u0947 \u0939\u0948\u0953",
+    "language": "hi",
+    "emergency": false,
+    "keyword": null
+  },
+  {
+    "time": "2026-04-30 12:29:58.827867",
+    "file": "uploads/audio_0e358fbb3748440aad7c3ecbb0a2592c.wav",
+    "text": "login error show me i have not found that because of ip right i have not found that it is still happening",
+    "language": "en",
+    "sentiment": {
+      "label": "NEGATIVE",
+      "score": 0.9991093277931213
+    },
+    "emergency": false
+  },
+  {
+    "time": "2026-04-30 12:33:04.664967",
+    "file": "uploads/audio_5d646a69106d4ffe93a428623d6a120d.wav",
+    "text": "help help help help me help me help me im in danger help me help me help me help me",
+    "language": "en",
+    "sentiment": {
+      "label": "NEGATIVE",
+      "score": 0.9847597479820251
+    },
+    "emergency": true
+  },
+  {
+    "time": "2026-04-30 12:36:05.352212",
+    "file": "uploads/audio_8d772893488148058a4e1d952c2f0237.wav",
+    "text": "\u092c\u091a\u093e\u0913 \u092e\u0941\u091d\u0947 \u092c\u091a\u093e\u0913 \u092e\u0947\u0930\u0940 \u092e\u0926\u0924 \u0915\u0930\u094b \u092c\u091a\u093e\u0913 \u092e\u0941\u091d\u0947 \u092e\u0948\u0902 \u0916\u0924\u0930\u0947 \u092e\u0947\u0902 \u0939\u0942\u0901 \u092e\u0941\u091d\u0947 \u092c\u091a\u093e\u0913",
+    "language": "hi",
+    "sentiment": {
+      "label": "NEGATIVE",
+      "score": 0.9171595573425293
+    },
+    "emergency": true
+  },
+  {
+    "time": "2026-04-30 13:04:44.435867",
+    "file": "uploads/audio_cc0e0db5e9b24630a4548e6be6e1941f.wav",
+    "text": "",
+    "language": "en",
+    "sentiment": {
+      "label": "POSITIVE",
+      "score": 0.748120903968811
+    },
+    "emergency": false
+  },
+  {
+    "time": "2026-05-17 19:02:20.556731",
+    "file": "uploads/audio_930af88b586a4cf08016c93b75ca0586.wav",
+    "text": "",
+    "language": "en",
+    "sentiment": {
+      "label": "POSITIVE",
+      "score": 0.748120903968811
+    },
+    "emergency": false
   }
 ]
