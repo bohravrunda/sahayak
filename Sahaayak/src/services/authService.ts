@@ -3,7 +3,7 @@ import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
 // 🔹 For physical device use your computer's local IP
 // 🔹 For Android emulator use 10.0.2.2
-const API_URL = "http://192.168.1.7:3000";
+const API_URL = "http://10.213.141.41:3000";
 
 export interface GoogleLoginResponse {
   ok: boolean;

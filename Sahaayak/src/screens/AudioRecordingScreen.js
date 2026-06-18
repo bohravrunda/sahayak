@@ -1,3 +1,4 @@
+import 'react-native-get-random-values';
 import React, { useEffect, useState } from 'react';
 import {
   View,
@@ -7,13 +8,21 @@ import {
   PermissionsAndroid,
   Platform
 } from 'react-native';
+
 import AudioRecord from "react-native-audio-record";
-import colors from '../styles/colors';
+import CryptoJS from 'crypto-js';
+import RNFS from 'react-native-fs';
+import { supabase } from '../config/supabase';
+import { Buffer } from 'buffer';
+
+global.Buffer = global.Buffer || Buffer;
 
 export default function AudioRecordingScreen() {
 
   const [isRecording, setIsRecording] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
+
+  const MASTER_KEY = 'my-secret-123';
 
   // ---------------- PERMISSIONS ----------------
   const requestPermissions = async () => {
@@ -22,6 +31,7 @@ export default function AudioRecordingScreen() {
         PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
         PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
         PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+        PermissionsAndroid.PERMISSIONS.INTERNET
       ]);
     }
   };
@@ -46,14 +56,8 @@ export default function AudioRecordingScreen() {
 
   // ---------------- KEYWORDS ----------------
   const KEYWORDS = [
-    "help",
-    "emergency",
-    "bachao",
-    "save me",
-    "attack",
-    "unsafe",
-    "call police",
-    "sos"
+    "help", "emergency", "bachao", "save me",
+    "attack", "unsafe", "call police", "sos"
   ];
 
   const normalize = (t) =>
@@ -85,19 +89,79 @@ export default function AudioRecordingScreen() {
 
         await sendToBackend(filePath);
 
-        startRecordingLoop(); // loop
+        startRecordingLoop(); // 🔁 loop
 
       }, 15000);
 
     } catch (err) {
-      console.log("Error:", err);
+      console.log("Recording Error:", err);
+    }
+  };
+
+  // ---------------- ENCRYPT + UPLOAD ----------------
+  const encryptAndUploadAudio = async (filePath) => {
+    try {
+      console.log("🔐 Encrypting audio...");
+
+      const base64Audio = await RNFS.readFile(filePath, 'base64');
+
+      const aesKey = CryptoJS.lib.WordArray.random(32).toString();
+
+      const encryptedData = CryptoJS.AES.encrypt(base64Audio, aesKey).toString();
+
+      const encryptedKey = CryptoJS.AES.encrypt(aesKey, MASTER_KEY).toString();
+
+      const fileName = `audio/${Date.now()}.enc`;
+
+      const fileData = Buffer.from(encryptedData, 'utf-8');
+
+      const { error } = await supabase.storage
+        .from('encrypt-audios')
+        .upload(fileName, fileData, {
+          contentType: 'application/octet-stream',
+          upsert: true
+        });
+
+      if (error) throw error;
+
+      const { data } = await supabase.storage
+        .from('encrypt-audios')
+        .createSignedUrl(fileName, 60 * 60);
+
+      const fileUrl = data?.signedUrl || '';
+
+      console.log("✅ Uploaded:", fileUrl);
+
+      return { fileUrl, encryptedKey };
+
+    } catch (err) {
+      console.log("❌ Upload Error:", err);
+      return null;
+    }
+  };
+
+  // ---------------- ALERT ----------------
+  const sendEmergencyAlert = async (url, encryptedKey) => {
+    try {
+      await fetch('http://192.168.1.8:3000/emergency/alert', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fileUrl: url,
+          encryptedKey: encryptedKey
+        })
+      });
+
+      console.log("📩 Alert sent");
+
+    } catch (err) {
+      console.log("❌ Alert Error:", err);
     }
   };
 
   // ---------------- BACKEND ----------------
   const sendToBackend = async (filePath) => {
     try {
-
       let formData = new FormData();
 
       formData.append("file", {
@@ -106,27 +170,31 @@ export default function AudioRecordingScreen() {
         type: "audio/wav",
       });
 
-      const res = await fetch("http://192.168.1.7:5000/analyze", {
+      const res = await fetch("http://192.168.1.8:5000/analyze", {
         method: "POST",
         body: formData,
       });
 
       const data = await res.json();
 
-      console.log("RESULT:", data);
+      console.log("🎤 RESULT:", data);
 
       const localKeyword = detectLocalKeyword(data.text);
 
-      // ---------------- EMERGENCY TRIGGER ----------------
-      if (
-        data.emergency === true ||
-        data.sentiment?.fear > 0.5 ||
-        localKeyword
-      ) {
+      // 🚨 EMERGENCY CONDITION
+      if (data.emergency === true || localKeyword) {
+
         Alert.alert(
           "🚨 EMERGENCY DETECTED",
-          `Keyword: ${localKeyword || data.keyword || "distress detected"}`
+          `Keyword: ${localKeyword || "distress detected"}`
         );
+
+        // 🔐 Encrypt + Upload
+        const result = await encryptAndUploadAudio(filePath);
+
+        if (result) {
+          await sendEmergencyAlert(result.fileUrl, result.encryptedKey);
+        }
       }
 
     } catch (err) {
@@ -166,10 +234,10 @@ export default function AudioRecordingScreen() {
 
 // ---------------- STYLES ----------------
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background },
+  container: { flex: 1, backgroundColor: '#F5F7FB' },
   header: {
     padding: 20,
-    backgroundColor: colors.primary,
+    backgroundColor: '#6C63FF',
     alignItems: 'center'
   },
   headerTitle: { color: 'white', fontSize: 20, fontWeight: 'bold' },

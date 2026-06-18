@@ -9,8 +9,35 @@ import {
   Alert,
   Switch,
 } from "react-native";
+
 import { getProfile, createProfile, updateProfile } from "../api/profileApi";
-import colors from "../styles/colors";
+import { getFCMToken } from "../utils/fcm";
+
+/* 🔥 REUSABLE INPUT */
+const InputField = ({
+  placeholder,
+  value,
+  onChangeText,
+  keyboardType = "default",
+}) => {
+  const [focused, setFocused] = useState(false);
+
+  return (
+    <View style={[styles.inputContainer, focused && styles.inputFocused]}>
+      <Text style={styles.labelText}>{placeholder}</Text>
+
+      <TextInput
+        style={styles.input}
+        value={value}
+        onChangeText={onChangeText}
+        keyboardType={keyboardType}
+        placeholderTextColor="#999"
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
+      />
+    </View>
+  );
+};
 
 export default function UserProfileScreen({ navigation, route }) {
   const isEditMode = route?.params?.isEditMode || false;
@@ -25,8 +52,6 @@ export default function UserProfileScreen({ navigation, route }) {
       { name: "", relationship: "", phone: "" },
       { name: "", relationship: "", phone: "" },
     ],
-    alertMode: "siren",
-    triggerPreference: "power button",
     autoSharing: {
       location: true,
       audio: false,
@@ -36,7 +61,6 @@ export default function UserProfileScreen({ navigation, route }) {
 
   const [loading, setLoading] = useState(false);
 
-  /* ================= LOAD PROFILE ================= */
   useEffect(() => {
     if (isEditMode) loadProfile();
   }, []);
@@ -45,7 +69,6 @@ export default function UserProfileScreen({ navigation, route }) {
     try {
       setLoading(true);
       const data = await getProfile();
-      console.log("PROFILE FROM BACKEND:", data);
 
       if (data) {
         setProfile((prev) => ({
@@ -57,15 +80,13 @@ export default function UserProfileScreen({ navigation, route }) {
           },
         }));
       }
-    } catch (err) {
-      console.log("❌ FETCH PROFILE ERROR:", err);
+    } catch {
       Alert.alert("Error", "Failed to load profile");
     } finally {
       setLoading(false);
     }
   };
 
-  /* ================= HELPERS ================= */
   const updateField = (field, value) => {
     setProfile((prev) => ({ ...prev, [field]: value }));
   };
@@ -73,10 +94,7 @@ export default function UserProfileScreen({ navigation, route }) {
   const updateAutoSharing = (field, value) => {
     setProfile((prev) => ({
       ...prev,
-      autoSharing: {
-        ...prev.autoSharing,
-        [field]: value,
-      },
+      autoSharing: { ...prev.autoSharing, [field]: value },
     }));
   };
 
@@ -102,10 +120,9 @@ export default function UserProfileScreen({ navigation, route }) {
     setProfile((prev) => ({ ...prev, emergencyContacts: contacts }));
   };
 
-  /* ================= SUBMIT ================= */
   const validateAndSubmit = async () => {
     if (!profile.fullName.trim()) {
-      Alert.alert("Error", "Please enter your full name");
+      Alert.alert("Error", "Enter full name");
       return;
     }
 
@@ -119,34 +136,41 @@ export default function UserProfileScreen({ navigation, route }) {
     );
 
     if (validContacts.length < 2) {
-      Alert.alert("Error", "Add at least 2 emergency contacts");
+      Alert.alert("Error", "Add at least 2 contacts");
       return;
     }
 
     try {
       setLoading(true);
-      console.log("SENDING PROFILE:", profile);
+
+      const token = await getFCMToken();
+
+      const updatedProfile = {
+        ...profile,
+        emergencyContacts: profile.emergencyContacts.map((c) => ({
+          ...c,
+          fcmToken: token,
+        })),
+      };
 
       if (isEditMode) {
-        await updateProfile(profile);
-        Alert.alert("Success", "Profile updated!");
+        await updateProfile(updatedProfile);
+        Alert.alert("Success", "Profile updated");
       } else {
-        await createProfile(profile);
-        Alert.alert("Success", "Profile created!");
+        await createProfile(updatedProfile);
+        Alert.alert("Success", "Profile created");
       }
 
       navigation.replace("Dashboard");
-    } catch (error) {
-      console.log("❌ SAVE ERROR:", error);
-      Alert.alert("Error", "Failed to save profile");
+    } catch {
+      Alert.alert("Error", "Save failed");
     } finally {
       setLoading(false);
     }
   };
 
-  /* ================= UI ================= */
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       {isEditMode && (
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Text style={styles.backButton}>← Back</Text>
@@ -158,203 +182,233 @@ export default function UserProfileScreen({ navigation, route }) {
       </Text>
 
       {/* BASIC INFO */}
-      <TextInput
-        style={styles.input}
-        placeholder="Full Name *"
-        value={profile.fullName}
-        onChangeText={(t) => updateField("fullName", t)}
-      />
+      <View style={styles.card}>
+        <Text style={styles.sectionTitle}>Basic Info</Text>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Age"
-        keyboardType="numeric"
-        value={profile.age}
-        onChangeText={(t) => updateField("age", t)}
-      />
+        <InputField
+          placeholder="Full Name *"
+          value={profile.fullName}
+          onChangeText={(t) => updateField("fullName", t)}
+        />
 
-      <TextInput
-        style={styles.input}
-        placeholder="Date of Birth (YYYY-MM-DD)"
-        value={profile.dateOfBirth}
-        onChangeText={(t) => updateField("dateOfBirth", t)}
-      />
+        <InputField
+          placeholder="Age"
+          value={profile.age}
+          keyboardType="numeric"
+          onChangeText={(t) => updateField("age", t)}
+        />
 
-      <TextInput
-        style={styles.input}
-        placeholder="Gender"
-        value={profile.gender}
-        onChangeText={(t) => updateField("gender", t)}
-      />
+        <InputField
+          placeholder="DOB (YYYY-MM-DD)"
+          value={profile.dateOfBirth}
+          onChangeText={(t) => updateField("dateOfBirth", t)}
+        />
 
-      <TextInput
-        style={styles.input}
-        placeholder="Mobile Number *"
-        keyboardType="phone-pad"
-        value={profile.mobileNumber}
-        onChangeText={(t) => updateField("mobileNumber", t)}
-      />
+        <InputField
+          placeholder="Gender"
+          value={profile.gender}
+          onChangeText={(t) => updateField("gender", t)}
+        />
 
-      {/* ALERT SETTINGS */}
-      <Text style={styles.sectionTitle}>Alert Settings</Text>
-
-      <TextInput
-        style={styles.input}
-        placeholder="Alert Mode (siren/vibration)"
-        value={profile.alertMode}
-        onChangeText={(t) => updateField("alertMode", t)}
-      />
-
-      <TextInput
-        style={styles.input}
-        placeholder="Trigger Preference (power button/shake)"
-        value={profile.triggerPreference}
-        onChangeText={(t) => updateField("triggerPreference", t)}
-      />
+        <InputField
+          placeholder="Mobile Number *"
+          value={profile.mobileNumber}
+          keyboardType="phone-pad"
+          onChangeText={(t) => updateField("mobileNumber", t)}
+        />
+      </View>
 
       {/* AUTO SHARING */}
-      <Text style={styles.sectionTitle}>Auto Sharing</Text>
+      <View style={styles.card}>
+        <Text style={styles.sectionTitle}>Auto Sharing</Text>
 
-      <View style={styles.switchRow}>
-        <Text>Share Location</Text>
-        <Switch
-          value={profile.autoSharing.location}
-          onValueChange={(v) => updateAutoSharing("location", v)}
-        />
+        {["location", "audio", "video"].map((item) => (
+          <View key={item} style={styles.switchRow}>
+            <Text style={styles.label}>{item.toUpperCase()}</Text>
+            <Switch
+              value={profile.autoSharing[item]}
+              onValueChange={(v) => updateAutoSharing(item, v)}
+              trackColor={{ true: "#1B5E20" }}
+            />
+          </View>
+        ))}
       </View>
 
-      <View style={styles.switchRow}>
-        <Text>Share Audio</Text>
-        <Switch
-          value={profile.autoSharing.audio}
-          onValueChange={(v) => updateAutoSharing("audio", v)}
-        />
+      {/* CONTACTS */}
+      <View style={styles.card}>
+        <Text style={styles.sectionTitle}>Emergency Contacts</Text>
+
+        {profile.emergencyContacts.map((c, i) => (
+          <View key={i} style={styles.contactCard}>
+            <InputField
+              placeholder="Name *"
+              value={c.name}
+              onChangeText={(t) =>
+                updateEmergencyContact(i, "name", t)
+              }
+            />
+
+            <InputField
+              placeholder="Relationship"
+              value={c.relationship}
+              onChangeText={(t) =>
+                updateEmergencyContact(i, "relationship", t)
+              }
+            />
+
+            <InputField
+              placeholder="Phone *"
+              value={c.phone}
+              keyboardType="phone-pad"
+              onChangeText={(t) =>
+                updateEmergencyContact(i, "phone", t)
+              }
+            />
+
+            {i > 1 && (
+              <TouchableOpacity
+                style={styles.removeBtn}
+                onPress={() => removeContact(i)}
+              >
+                <Text style={{ color: "#fff" }}>Remove</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        ))}
+
+        <TouchableOpacity style={styles.addBtn} onPress={addEmergencyContact}>
+          <Text style={styles.addText}>+ Add Contact</Text>
+        </TouchableOpacity>
       </View>
-
-      <View style={styles.switchRow}>
-        <Text>Share Video</Text>
-        <Switch
-          value={profile.autoSharing.video}
-          onValueChange={(v) => updateAutoSharing("video", v)}
-        />
-      </View>
-
-      {/* EMERGENCY CONTACTS */}
-      <Text style={styles.sectionTitle}>Emergency Contacts</Text>
-
-      {profile.emergencyContacts.map((c, i) => (
-        <View key={i} style={styles.contactCard}>
-          <TextInput
-            style={styles.input}
-            placeholder="Name *"
-            value={c.name}
-            onChangeText={(t) => updateEmergencyContact(i, "name", t)}
-          />
-
-          <TextInput
-            style={styles.input}
-            placeholder="Relationship"
-            value={c.relationship}
-            onChangeText={(t) =>
-              updateEmergencyContact(i, "relationship", t)
-            }
-          />
-
-          <TextInput
-            style={styles.input}
-            placeholder="Phone *"
-            keyboardType="phone-pad"
-            value={c.phone}
-            onChangeText={(t) => updateEmergencyContact(i, "phone", t)}
-          />
-
-          {i > 1 && (
-            <TouchableOpacity
-              style={styles.removeBtn}
-              onPress={() => removeContact(i)}
-            >
-              <Text style={{ color: "white" }}>Remove</Text>
-            </TouchableOpacity>
-          )}
-        </View>
-      ))}
-
-      <TouchableOpacity
-        style={styles.addContactButton}
-        onPress={addEmergencyContact}
-      >
-        <Text style={styles.addContactText}>+ Add Another Contact</Text>
-      </TouchableOpacity>
 
       {/* SUBMIT */}
       <TouchableOpacity
-        style={styles.submitButton}
+        style={styles.submitBtn}
         onPress={validateAndSubmit}
         disabled={loading}
       >
         <Text style={styles.submitText}>
-          {loading ? "Saving..." : isEditMode ? "Update Profile" : "Complete Profile"}
+          {loading ? "Saving..." : "Save Profile"}
         </Text>
       </TouchableOpacity>
     </ScrollView>
   );
 }
 
-/* ================= STYLES ================= */
+/* 🎨 FINAL STYLES */
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, backgroundColor: colors.background },
-  backButton: { fontSize: 18, color: colors.primary, marginBottom: 10 },
+  container: {
+    flex: 1,
+    backgroundColor: "#F4F6F8",
+    padding: 16,
+  },
+
   title: {
     fontSize: 26,
-    fontWeight: "bold",
-    marginBottom: 20,
-    color: colors.primary,
+    fontWeight: "700",
+    marginBottom: 16,
+    color: "#1C1C1E",
   },
-  sectionTitle: { fontSize: 18, fontWeight: "bold", marginVertical: 10 },
-  input: {
-    borderWidth: 1,
-    borderColor: colors.gray,
-    borderRadius: 10,
-    padding: 12,
+
+  backButton: {
+    fontSize: 16,
+    marginBottom: 10,
+    color: "#444",
+  },
+
+  card: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 18,
+    padding: 16,
+    marginBottom: 16,
+    elevation: 2,
+  },
+
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "600",
     marginBottom: 12,
-    backgroundColor: colors.white,
-    color: "black",
+    color: "#222",
   },
-  contactCard: {
-    backgroundColor: colors.white,
-    padding: 15,
-    borderRadius: 10,
-    marginBottom: 15,
+
+  inputContainer: {
+    backgroundColor: "#FAFAFA",
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderWidth: 1,
+    borderColor: "#E0E0E0",
+    marginBottom: 12,
   },
-  removeBtn: {
-    backgroundColor: "red",
-    padding: 10,
-    borderRadius: 8,
-    alignItems: "center",
-    marginTop: 10,
+
+  inputFocused: {
+    borderColor: "#1B5E20",
+    backgroundColor: "#FFFFFF",
   },
-  addContactButton: {
-    borderWidth: 2,
-    borderColor: colors.primary,
-    borderStyle: "dashed",
-    padding: 12,
-    borderRadius: 10,
-    alignItems: "center",
-    marginBottom: 20,
+
+  labelText: {
+    fontSize: 12,
+    color: "#777",
+    marginBottom: 4,
   },
-  addContactText: { color: colors.primary, fontWeight: "bold" },
-  submitButton: {
-    backgroundColor: colors.primary,
-    padding: 15,
-    borderRadius: 10,
-    alignItems: "center",
+
+  input: {
+    fontSize: 16,
+    color: "#000",
   },
-  submitText: { color: "white", fontSize: 18, fontWeight: "bold" },
+
+  label: {
+    fontSize: 15,
+    color: "#333",
+  },
 
   switchRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 10,
+    marginBottom: 12,
+  },
+
+  contactCard: {
+    backgroundColor: "#F9F9F9",
+    padding: 12,
+    borderRadius: 14,
+    marginBottom: 12,
+  },
+
+  removeBtn: {
+    backgroundColor: "#D32F2F",
+    padding: 8,
+    borderRadius: 8,
+    alignItems: "center",
+    marginTop: 8,
+  },
+
+  addBtn: {
+    borderWidth: 1,
+    borderColor: "#CCC",
+    borderStyle: "dashed",
+    padding: 12,
+    borderRadius: 10,
+    alignItems: "center",
+  },
+
+  addText: {
+    color: "#555",
+    fontWeight: "500",
+  },
+
+  submitBtn: {
+    backgroundColor: "#1B5E20",
+    padding: 16,
+    borderRadius: 14,
+    alignItems: "center",
+    marginBottom: 30,
+  },
+
+  submitText: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "600",
   },
 });

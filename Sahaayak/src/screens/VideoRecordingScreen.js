@@ -20,6 +20,7 @@ export default function VideoRecordingScreen() {
 
   const [hasPermission, setHasPermission] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
+  const [cameraReady, setCameraReady] = useState(false);
 
   const cameraRef = useRef(null);
   const intervalRef = useRef(null);
@@ -29,14 +30,14 @@ export default function VideoRecordingScreen() {
   const DANGER = ['angry', 'fear', 'sad'];
   const MASTER_KEY = 'my-secret-123';
 
-  // 📷 Permission
+  // 📷 Permissions
   useEffect(() => {
     const getPermission = async () => {
-      const granted = await PermissionsAndroid.request(
+      const camera = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.CAMERA
       );
 
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+      if (camera === PermissionsAndroid.RESULTS.GRANTED) {
         setHasPermission(true);
       }
     };
@@ -47,13 +48,14 @@ export default function VideoRecordingScreen() {
   // 🧠 Emotion detection
   const runEmotionDetection = async () => {
     try {
-      if (!cameraRef.current || processingRef.current) return;
+      if (!cameraRef.current || processingRef.current || !cameraReady) return;
 
       processingRef.current = true;
 
       const frame = await cameraRef.current.takePictureAsync({
         quality: 0.4,
         base64: false,
+        pauseAfterCapture: false
       });
 
       const result = await detectEmotion(frame.uri);
@@ -74,10 +76,14 @@ export default function VideoRecordingScreen() {
 
         const duration = now - dangerStartRef.current;
 
-        if (duration >= 5000) {
+        if (duration >= 1000) {
           dangerStartRef.current = null;
+
+          stopRecording(); // 🔥 stop loop
+
           await handleUpload(frame.uri);
-          Alert.alert("🚨 Emergency", "Auto alert sent!");
+
+          Alert.alert("🚨 Emergency", "Alert sent automatically!");
         }
 
       } else {
@@ -95,7 +101,7 @@ export default function VideoRecordingScreen() {
   // ▶ Start
   const startRecording = () => {
     setIsRecording(true);
-    intervalRef.current = setInterval(runEmotionDetection, 3000);
+    intervalRef.current = setInterval(runEmotionDetection, 5000);
   };
 
   // ⏹ Stop
@@ -105,61 +111,56 @@ export default function VideoRecordingScreen() {
     dangerStartRef.current = null;
   };
 
-  // 🔐 ENCRYPT + UPLOAD + ALERT
-  const handleUpload = async (imageUri) => {
-    try {
-      // Convert image to base64
-      const base64 = await RNFS.readFile(imageUri, 'base64');
+  // 🔐 Upload + BACKEND ALERT
+const handleUpload = async (imageUri) => {
+  try {
+    const base64 = await RNFS.readFile(imageUri, 'base64');
 
-      // Generate AES key
-      const aesKey = CryptoJS.lib.WordArray.random(32).toString();
+    const aesKey = CryptoJS.lib.WordArray.random(32).toString();
 
-      // Encrypt image
-      const encryptedData = CryptoJS.AES.encrypt(base64, aesKey).toString();
+    const encryptedData = CryptoJS.AES.encrypt(base64, aesKey).toString();
 
-      // Encrypt key using master key
-      const encryptedKey = CryptoJS.AES.encrypt(aesKey, MASTER_KEY).toString();
+    const encryptedKey = CryptoJS.AES.encrypt(aesKey, MASTER_KEY).toString();
 
-      const fileName = `emergency/${Date.now()}.enc`;
-      const fileData = Buffer.from(encryptedData, 'utf-8');
+    const fileName = `emergency/${Date.now()}.enc`;
 
-      // Upload encrypted file
-      const { error } = await supabase.storage
-        .from('encrypted-videos')
-        .upload(fileName, fileData, {
-          contentType: 'application/octet-stream',
-          upsert: true
-        });
+    const fileData = Buffer.from(encryptedData, 'utf-8');
 
-      if (error) throw error;
+    const { error } = await supabase.storage
+      .from('encrypted-videos')
+      .upload(fileName, fileData, {
+        contentType: 'application/octet-stream',
+        upsert: true
+      });
 
-      // Generate signed URL
-      const { data: signedData, error: signedError } =
-        await supabase.storage
-          .from('encrypted-videos')
-          .createSignedUrl(fileName, 60 * 60);
+    if (error) throw error;
 
-      if (signedError) throw signedError;
+    const { data } = await supabase.storage
+      .from('encrypted-videos')
+      .createSignedUrl(fileName, 60 * 60);
 
-      const fileUrl = signedData.signedUrl;
+    const fileUrl = data?.signedUrl || '';
 
-      console.log("✅ Upload success");
+    console.log("🔥 fileUrl:", fileUrl);
+    console.log("🔥 encryptedKey:", encryptedKey);
 
-      // 🚨 Send alert to backend
-      await sendEmergencyAlert(fileUrl, encryptedKey);
-
-    } catch (err) {
-      console.log("❌ Upload error:", err);
+    if (!fileUrl || !encryptedKey) {
+      console.log("❌ Missing data, not sending alert");
+      return;
     }
-  };
 
-  // 🚨 SEND ALERT (SMS via backend)
+    await sendEmergencyAlert(fileUrl, encryptedKey);
+
+  } catch (err) {
+    console.log("❌ Upload error:", err);
+  }
+};  // 🚨 BACKEND CALL
   const sendEmergencyAlert = async (url, encryptedKey) => {
     try {
       const profile = await getProfile();
       const contacts = profile?.emergencyContacts || [];
 
-      await fetch('http://192.168.1.7:3000/emergency/alert', {
+      await fetch('http://192.168.1.8:3000/emergency/alert', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -169,10 +170,10 @@ export default function VideoRecordingScreen() {
         })
       });
 
-      console.log("📩 Emergency alert sent");
+      console.log("📩 Alert sent to backend");
 
     } catch (err) {
-      console.log("SMS Error:", err);
+      console.log("❌ Backend error:", err);
     }
   };
 
@@ -188,6 +189,10 @@ export default function VideoRecordingScreen() {
         style={{ flex: 1 }}
         type={RNCamera.Constants.Type.front}
         captureAudio={false}
+        onCameraReady={() => {
+          console.log("✅ Camera Ready");
+          setCameraReady(true);
+        }}
       />
 
       <View style={styles.controls}>

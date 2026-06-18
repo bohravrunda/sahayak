@@ -6,10 +6,10 @@ import {
   StyleSheet,
   ScrollView,
   Switch,
+  StatusBar,
 } from "react-native";
 
 const SettingsScreen = ({ navigation }) => {
-  // States
   const [language, setLanguage] = useState("English");
   const [darkTheme, setDarkTheme] = useState(false);
 
@@ -25,73 +25,100 @@ const SettingsScreen = ({ navigation }) => {
     setPermissions((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
+  // 🎨 Theme Colors
+  const theme = darkTheme
+    ? {
+        bg: "#121212",
+        card: "#1e1e1e",
+        text: "#ffffff",
+        subText: "#aaaaaa",
+        primary: "#4CAF50",
+        border: "#2c2c2c",
+      }
+    : {
+        bg: "#f4f6f8",
+        card: "#ffffff",
+        text: "#222",
+        subText: "#666",
+        primary: "#007AFF",
+        border: "#e0e0e0",
+      };
+
   return (
-    <View style={styles.container}>
-      {/* Header with Back Button */}
-      <View style={styles.header}>
-        <TouchableOpacity 
-          style={styles.backButton}
-          onPress={() => navigation.goBack()}
-        >
-          <Text style={styles.backArrow}>←</Text>
+    <View style={[styles.container, { backgroundColor: theme.bg }]}>
+      <StatusBar barStyle={darkTheme ? "light-content" : "dark-content"} />
+
+      {/* HEADER */}
+      <View style={[styles.header, { borderBottomColor: theme.border }]}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Text style={[styles.backArrow, { color: theme.text }]}>←</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Settings</Text>
-        <View style={styles.placeholder} />
+
+        <Text style={[styles.headerTitle, { color: theme.text }]}>
+          Settings
+        </Text>
+
+        <View style={{ width: 30 }} />
       </View>
 
-      <ScrollView style={styles.scrollView}>
-        {/* ---------------- PROFILE ---------------- */}
-        <View style={styles.sectionCard}>
-          <Text style={styles.sectionTitle}>Profile</Text>
-          <Text style={styles.sectionText}>View & update your personal details</Text>
-          <TouchableOpacity 
-            style={styles.buttonSmall}
-            onPress={() => navigation.navigate('Profile')}
+      <ScrollView contentContainerStyle={{ padding: 16 }}>
+        {/* PROFILE */}
+        <View style={[styles.card, { backgroundColor: theme.card }]}>
+          <Text style={[styles.title, { color: theme.text }]}>Profile</Text>
+          <Text style={[styles.subtitle, { color: theme.subText }]}>
+            Manage your account details
+          </Text>
+
+          <TouchableOpacity
+            style={[styles.primaryBtn, { backgroundColor: theme.primary }]}
+            onPress={() => navigation.navigate("Profile")}
           >
-            <Text style={styles.buttonSmallText}>Edit Profile</Text>
+            <Text style={styles.btnText}>Edit Profile</Text>
           </TouchableOpacity>
         </View>
 
-        {/* ---------------- PRIVACY & PERMISSIONS ---------------- */}
-        <View style={styles.sectionCard}>
-          <Text style={styles.sectionTitle}>Privacy & Permissions</Text>
+        {/* PERMISSIONS */}
+        <View style={[styles.card, { backgroundColor: theme.card }]}>
+          <Text style={[styles.title, { color: theme.text }]}>
+            Permissions
+          </Text>
 
           {Object.keys(permissions).map((key) => (
             <View key={key} style={styles.row}>
-              <Text style={styles.rowText}>
+              <Text style={[styles.rowText, { color: theme.text }]}>
                 {key.charAt(0).toUpperCase() + key.slice(1)}
               </Text>
               <Switch
                 value={permissions[key]}
                 onValueChange={() => togglePermission(key)}
+                trackColor={{ true: theme.primary }}
               />
             </View>
           ))}
         </View>
 
-        {/* ---------------- LANGUAGE ---------------- */}
-        <View style={styles.sectionCard}>
-          <Text style={styles.sectionTitle}>Language</Text>
+        {/* LANGUAGE */}
+        <View style={[styles.card, { backgroundColor: theme.card }]}>
+          <Text style={[styles.title, { color: theme.text }]}>Language</Text>
 
-          <View style={styles.row}>
-            <Text style={styles.rowText}>Selected: {language}</Text>
-          </View>
-
-          <View style={styles.languageOptions}>
+          <View style={styles.languageContainer}>
             {["English", "Hindi", "Marathi"].map((lang) => (
               <TouchableOpacity
                 key={lang}
                 style={[
                   styles.langBtn,
-                  language === lang && styles.langBtnActive,
+                  {
+                    backgroundColor:
+                      language === lang ? theme.primary : theme.border,
+                  },
                 ]}
                 onPress={() => setLanguage(lang)}
               >
                 <Text
-                  style={[
-                    styles.langText,
-                    language === lang && styles.langTextActive,
-                  ]}
+                  style={{
+                    color: language === lang ? "#fff" : theme.text,
+                    fontWeight: "500",
+                  }}
                 >
                   {lang}
                 </Text>
@@ -100,42 +127,45 @@ const SettingsScreen = ({ navigation }) => {
           </View>
         </View>
 
-        {/* ---------------- THEME ---------------- */}
-        <View style={styles.sectionCard}>
-          <Text style={styles.sectionTitle}>Theme</Text>
-
+        {/* THEME */}
+        <View style={[styles.card, { backgroundColor: theme.card }]}>
           <View style={styles.row}>
-            <Text style={styles.rowText}>Dark Mode</Text>
-            <Switch value={darkTheme} onValueChange={setDarkTheme} />
+            <Text style={[styles.title, { color: theme.text }]}>
+              Dark Mode
+            </Text>
+            <Switch
+              value={darkTheme}
+              onValueChange={setDarkTheme}
+              trackColor={{ true: theme.primary }}
+            />
           </View>
         </View>
 
-        {/* ---------------- APP DATA ---------------- */}
-        <View style={styles.sectionCard}>
-          <Text style={styles.sectionTitle}>App Data</Text>
+        {/* APP DATA */}
+        <View style={[styles.card, { backgroundColor: theme.card }]}>
+          <Text style={[styles.title, { color: theme.text }]}>
+            App Data
+          </Text>
 
-          <TouchableOpacity style={styles.dataBtn}>
-            <Text style={styles.dataBtnText}>Clear Cache</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.dataBtn}>
-            <Text style={styles.dataBtnText}>Export App Data</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.dataBtn}>
-            <Text style={styles.dataBtnText}>Reset App</Text>
-          </TouchableOpacity>
+          {["Clear Cache", "Export Data", "Reset App"].map((item) => (
+            <TouchableOpacity key={item} style={styles.dataBtn}>
+              <Text style={[styles.rowText, { color: theme.text }]}>
+                {item}
+              </Text>
+            </TouchableOpacity>
+          ))}
         </View>
 
-        {/* ---------------- ABOUT APP ---------------- */}
-        <View style={styles.sectionCard}>
-          <Text style={styles.sectionTitle}>About App</Text>
-          <Text style={styles.sectionText}>Version: 1.0.0</Text>
-          <Text style={styles.sectionText}>Developed by Team Sahaayak</Text>
-          <Text style={styles.sectionText}>For support: support@sahaayak.app</Text>
+        {/* ABOUT */}
+        <View style={[styles.card, { backgroundColor: theme.card }]}>
+          <Text style={[styles.title, { color: theme.text }]}>About</Text>
+          <Text style={[styles.subtitle, { color: theme.subText }]}>
+            Version 1.0.0
+          </Text>
+          <Text style={[styles.subtitle, { color: theme.subText }]}>
+            Team Sahaayak
+          </Text>
         </View>
-
-        <View style={{ height: 40 }} />
       </ScrollView>
     </View>
   );
@@ -144,97 +174,75 @@ const SettingsScreen = ({ navigation }) => {
 export default SettingsScreen;
 
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1, 
-    backgroundColor: "#fff",
-  },
-  
-  // Header Styles
+  container: { flex: 1 },
+
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingTop: 50,
-    paddingBottom: 15,
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
-  },
-  
-  backButton: {
-    padding: 8,
-  },
-  
-  backArrow: {
-    fontSize: 56,
-    color: '#000000ff',
-    fontWeight: '900',
-    marginTop: -60,
-    marginLeft: -14,
-  },
-  
-  headerTitle: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: '#333',
-    marginTop: -50,
-  },
-  
-  placeholder: {
-    width: 44, // Same width as back button for centering
-  },
-  
-  scrollView: {
-    flex: 1,
-    padding: 20,
-  },
-
-  sectionCard: {
-    backgroundColor: "#f8f8f8",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     padding: 16,
-    borderRadius: 14,
-    marginBottom: 20,
-    elevation: 2,
+    borderBottomWidth: 1,
   },
 
-  sectionTitle: { fontSize: 20, fontWeight: "700", marginBottom: 8 },
-  sectionText: { fontSize: 15, color: "#555", marginBottom: 6 },
+  backArrow: { fontSize: 22 },
+
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: "700",
+  },
+
+  card: {
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 16,
+    elevation: 3,
+  },
+
+  title: {
+    fontSize: 18,
+    fontWeight: "600",
+    marginBottom: 8,
+  },
+
+  subtitle: {
+    fontSize: 14,
+    marginBottom: 10,
+  },
 
   row: {
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
     paddingVertical: 10,
   },
-  rowText: { fontSize: 16, color: "#333" },
 
-  languageOptions: { flexDirection: "row", marginTop: 10 },
+  rowText: { fontSize: 15 },
+
+  languageContainer: {
+    flexDirection: "row",
+    marginTop: 10,
+  },
+
   langBtn: {
     paddingVertical: 8,
     paddingHorizontal: 14,
-    backgroundColor: "#e0e0e0",
-    borderRadius: 8,
+    borderRadius: 10,
     marginRight: 10,
   },
-  langBtnActive: { backgroundColor: "#007AFF" },
-  langText: { color: "#333", fontSize: 15 },
-  langTextActive: { color: "#fff", fontWeight: "600" },
 
-  buttonSmall: {
-    marginTop: 10,
+  primaryBtn: {
     padding: 10,
-    backgroundColor: "#007AFF",
-    borderRadius: 8,
-    alignSelf: "flex-start",
+    borderRadius: 10,
+    marginTop: 10,
+    alignItems: "center",
   },
-  buttonSmallText: { color: "#fff", fontSize: 15, fontWeight: "600" },
+
+  btnText: {
+    color: "#fff",
+    fontWeight: "600",
+  },
 
   dataBtn: {
     paddingVertical: 10,
-    marginTop: 6,
-    backgroundColor: "#ececec",
-    borderRadius: 8,
-    paddingHorizontal: 10,
   },
-  dataBtnText: { fontSize: 16, color: "#333" },
-}); 
+});
