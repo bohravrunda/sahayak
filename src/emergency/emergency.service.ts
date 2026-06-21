@@ -4,23 +4,91 @@ import { FirebaseService } from '../firebase/firebase.service';
 @Injectable()
 export class EmergencyService {
 
-  constructor(private firebaseService: FirebaseService) {}
+  constructor(
+    private firebaseService: FirebaseService
+  ) {}
 
-async handleAlert(body: any) {
-  const { fileUrl, encryptedKey, contacts } = body;
+  // temporary storage
+  private emergencyMap = new Map();
 
-  console.log("📩 ALERT BODY:", body); // 🔥 ADD THIS
+  async handleAlert(body: any) {
 
-  for (let contact of contacts) {
+    const {
+      emergencyId,
+      fileName,
+      aesKey,
+      contacts
+    } = body;
 
-    if (!contact.fcmToken) continue;
-
-    await this.firebaseService.sendNotification(
-      contact.fcmToken,
-      String(fileUrl),
-      String(encryptedKey)
+    // save mapping
+    this.emergencyMap.set(
+      emergencyId,
+      {
+        fileName,
+        aesKey
+      }
     );
+
+    console.log(
+      "Saved:",
+      this.emergencyMap.get(emergencyId)
+    );
+
+    for (let contact of contacts) {
+
+      console.log("CONTACT =", contact);
+
+      if (!contact.fcmToken) {
+        console.log("❌ No FCM token");
+        continue;
+      }
+
+      const viewLink =
+        `http://192.168.1.8:3000/emergency/view/${emergencyId}`;
+
+      const message = `
+🚨 Emergency Alert!
+
+User may be in danger.
+
+Open:
+${viewLink}
+
+Decrypt key:
+${aesKey}
+`;
+
+      try {
+
+        const response =
+          await this.firebaseService.sendNotification(
+            contact.fcmToken,
+            '🚨 Emergency Alert',
+            message
+          );
+
+        console.log(
+          "✅ FCM Response:",
+          response
+        );
+
+      } catch (err) {
+
+        console.log(
+          "❌ FCM Error:",
+          err
+        );
+
+      }
+    }
+
+    return {
+      message: 'Sent'
+    };
   }
 
-  return { message: 'Sent' };
-}}
+  getEmergencyData(id: string) {
+    return this.emergencyMap.get(id);
+  }
+
+}

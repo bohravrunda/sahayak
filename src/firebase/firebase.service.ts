@@ -58,9 +58,8 @@
 // }
 
 
-
-import { Injectable, OnModuleInit } from '@nestjs/common';
 import * as admin from 'firebase-admin';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -69,16 +68,13 @@ export class FirebaseService implements OnModuleInit {
   public firestore!: admin.firestore.Firestore;
 
   onModuleInit() {
-    // 🔥 Prevent duplicate init
-    if (admin.apps.length > 0) {
-      console.log('⚠️ Firebase already initialized');
+    if (admin.apps.length) {
       this.firestore = admin.firestore();
       return;
     }
 
     let credentials: admin.ServiceAccount;
 
-    // ✅ ENV METHOD (Production)
     if (
       process.env.FIREBASE_PROJECT_ID &&
       process.env.FIREBASE_CLIENT_EMAIL &&
@@ -87,62 +83,64 @@ export class FirebaseService implements OnModuleInit {
       credentials = {
         projectId: process.env.FIREBASE_PROJECT_ID,
         clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-        privateKey: process.env.FIREBASE_PRIVATE_KEY
-          .replace(/\\n/g, '\n')
-          .replace(/"/g, ''),
+        privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
       };
+    } else {
+      const filePath = path.resolve(
+        process.env.FIREBASE_SERVICE_ACCOUNT || './firebase-admin.json',
+      );
 
-      console.log('✅ Firebase initialized with ENV');
-    } 
-    // ✅ JSON METHOD (Local)
-    else {
-      const serviceAccountPath =
-        process.env.FIREBASE_SERVICE_ACCOUNT ||
-        path.join(__dirname, 'firebase-admin.json');
-
-      const resolvedPath = path.resolve(serviceAccountPath);
-
-      if (!fs.existsSync(resolvedPath)) {
-        throw new Error(`❌ Firebase JSON not found at ${resolvedPath}`);
-      }
-
-      credentials = JSON.parse(fs.readFileSync(resolvedPath, 'utf8'));
-
-      console.log(`✅ Firebase initialized with JSON (${resolvedPath})`);
+      credentials = JSON.parse(fs.readFileSync(filePath, 'utf8'));
     }
 
-    // 🚀 INIT
     admin.initializeApp({
       credential: admin.credential.cert(credentials),
     });
 
     this.firestore = admin.firestore();
-
-    console.log('🔥 Firestore connected');
   }
 
-  // 🚨 SEND PUSH NOTIFICATION (MAIN FEATURE)
-async sendNotification(token: string, fileUrl: string, encryptedKey: string) {
-  try {
+  async sendNotification(
+    token: string,
+    emergencyId: string,
+    aesKey: string,
+  ) {
 
-    const response = await admin.messaging().send({
+    const viewLink =
+      `http://192.168.1.8:3000/emergency/view/${emergencyId}`;
+
+    const message =
+`🚨 Emergency Alert!
+
+User may be in danger.
+
+Open:
+${viewLink}
+
+Decrypt key:
+${aesKey}`;
+
+    return admin.messaging().send({
+
       token,
 
-      data: {
-        fileUrl: String(fileUrl),
-        encryptedKey: String(encryptedKey),
+      notification: {
         title: '🚨 Emergency Alert',
-        body: 'User may be in danger!'
+        body: 'User may be in danger!',
+      },
+
+      data: {
+        emergencyId: String(emergencyId),
+        aesKey: String(aesKey),
+        message: message,
       },
 
       android: {
-        priority: 'high'
-      }
+        priority: 'high',
+        notification: {
+          sound: 'default',
+        },
+      },
     });
-
-    console.log('✅ FCM sent:', response);
-
-  } catch (error: any) {
-    console.log('❌ FCM Error:', error.message);
   }
-}}
+}

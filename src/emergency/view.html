@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Emergency File</title>
+
+  <style>
+    body{
+      background:#f4f4f4;
+      font-family:Arial;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      min-height:100vh;
+    }
+
+    .box{
+      background:white;
+      width:400px;
+      padding:25px;
+      border-radius:15px;
+      box-shadow:0 0 15px rgba(0,0,0,.15);
+    }
+
+    h2{
+      text-align:center;
+      color:red;
+    }
+
+    input{
+      width:100%;
+      padding:12px;
+      margin-top:15px;
+      border-radius:8px;
+      border:1px solid #ccc;
+      font-size:16px;
+      box-sizing:border-box;
+    }
+
+    button{
+      width:100%;
+      padding:14px;
+      margin-top:20px;
+      border:none;
+      background:green;
+      color:white;
+      font-size:16px;
+      border-radius:8px;
+      cursor:pointer;
+    }
+
+    button:hover{
+      background:#0b6e0b;
+    }
+
+    #error{
+      color:red;
+      margin-top:15px;
+      text-align:center;
+    }
+
+    img{
+      width:100%;
+      margin-top:20px;
+      border-radius:10px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="box">
+
+  <h2>🚨 Secure Emergency File</h2>
+
+  <p>
+    Enter decrypt key to view image
+  </p>
+
+  <input
+    id="key"
+    type="text"
+    placeholder="Enter decrypt key"
+  >
+
+  <button onclick="unlockFile()">
+    Unlock
+  </button>
+
+  <div id="error"></div>
+
+  <img
+    id="image"
+    style="display:none;"
+  >
+
+</div>
+
+<script>
+
+async function unlockFile(){
+
+  const key = document.getElementById("key").value;
+
+  const sessionId =
+    window.location.pathname.split("/").pop();
+
+  try{
+
+    const response = await fetch(
+      "/emergency/decrypt",
+      {
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json"
+        },
+        body:JSON.stringify({
+          sessionId,
+          key
+        })
+      }
+    );
+
+    const data = await response.json();
+
+    if(data.success){
+
+      document.getElementById("image").src =
+        "data:image/jpeg;base64," + data.imageBase64;
+
+      document.getElementById("image").style.display =
+        "block";
+
+      document.getElementById("error").innerHTML =
+        "";
+
+    }
+    else{
+
+      document.getElementById("error").innerHTML =
+        data.message;
+
+    }
+
+  }
+  catch(err){
+
+    document.getElementById("error").innerHTML =
+      "Failed to load image";
+
+  }
+
+}
+
+</script>
+
+</body>
+</html>
