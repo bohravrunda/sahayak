@@ -99,66 +99,99 @@ export default function AudioRecordingScreen() {
   };
 
   // ---------------- ENCRYPT + UPLOAD ----------------
-  const encryptAndUploadAudio = async (filePath) => {
-    try {
-      console.log("🔐 Encrypting audio...");
+const encryptAndUploadAudio = async (filePath) => {
+  try {
 
-      const base64Audio = await RNFS.readFile(filePath, 'base64');
+    console.log("File path:", filePath);
 
-      const aesKey = CryptoJS.lib.WordArray.random(32).toString();
+    const base64Audio = await RNFS.readFile(filePath, 'base64');
 
-      const encryptedData = CryptoJS.AES.encrypt(base64Audio, aesKey).toString();
+    console.log("Base64 length:", base64Audio.length);
 
-      const encryptedKey = CryptoJS.AES.encrypt(aesKey, MASTER_KEY).toString();
+    const aesKey = CryptoJS.lib.WordArray.random(32).toString();
 
-      const fileName = `audio/${Date.now()}.enc`;
+    const encryptedData =
+      CryptoJS.AES.encrypt(base64Audio, aesKey).toString();
 
-      const fileData = Buffer.from(encryptedData, 'utf-8');
+    const fileName = `audio/${Date.now()}.enc`;
 
-      const { error } = await supabase.storage
-        .from('encrypt-audios')
-        .upload(fileName, fileData, {
+    console.log("Uploading:", fileName);
+
+    const fileData = Buffer.from(encryptedData, 'utf-8');
+
+    const { data, error } = await supabase.storage
+      .from('encrypt-audios')
+      .upload(
+        fileName,
+        fileData,
+        {
           contentType: 'application/octet-stream',
           upsert: true
-        });
+        }
+      );
 
-      if (error) throw error;
+    console.log("Upload data:", data);
+    console.log("Upload error:", error);
 
-      const { data } = await supabase.storage
-        .from('encrypt-audios')
-        .createSignedUrl(fileName, 60 * 60);
-
-      const fileUrl = data?.signedUrl || '';
-
-      console.log("✅ Uploaded:", fileUrl);
-
-      return { fileUrl, encryptedKey };
-
-    } catch (err) {
-      console.log("❌ Upload Error:", err);
-      return null;
+    if (error) {
+      throw error;
     }
-  };
 
-  // ---------------- ALERT ----------------
-  const sendEmergencyAlert = async (url, encryptedKey) => {
-    try {
-      await fetch('http://192.168.1.8:3000/emergency/alert', {
+    console.log("✅ Upload successful");
+
+    return {
+      fileName,
+      aesKey
+    };
+
+  } catch (err) {
+    console.log("❌ Upload Error:", err);
+    return null;
+  }
+};
+// ---------------- ALERT ----------------
+const sendEmergencyAlert = async (
+  emergencyId,
+  fileName,
+  aesKey
+) => {
+
+  try {
+
+    const profile =
+      await getProfile();
+
+    const contacts =
+      profile?.emergencyContacts || [];
+
+    await fetch(
+      'http://192.168.1.8:3000/emergency/alert',
+      {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify({
-          fileUrl: url,
-          encryptedKey: encryptedKey
+          emergencyId,
+          fileName,
+          aesKey,
+          contacts
         })
-      });
+      }
+    );
 
-      console.log("📩 Alert sent");
+    console.log("📩 Alert sent");
 
-    } catch (err) {
-      console.log("❌ Alert Error:", err);
-    }
-  };
+  } catch (err) {
 
+    console.log(
+      "❌ Alert Error:",
+      err
+    );
+
+  }
+
+};
   // ---------------- BACKEND ----------------
   const sendToBackend = async (filePath) => {
     try {
@@ -184,18 +217,36 @@ export default function AudioRecordingScreen() {
       // 🚨 EMERGENCY CONDITION
       if (data.emergency === true || localKeyword) {
 
-        Alert.alert(
-          "🚨 EMERGENCY DETECTED",
-          `Keyword: ${localKeyword || "distress detected"}`
-        );
+  Alert.alert(
+    "🚨 EMERGENCY DETECTED",
+    `Keyword: ${
+      localKeyword || "distress detected"
+    }`
+  );
 
-        // 🔐 Encrypt + Upload
-        const result = await encryptAndUploadAudio(filePath);
+  const result =
+    await encryptAndUploadAudio(
+      filePath
+    );
 
-        if (result) {
-          await sendEmergencyAlert(result.fileUrl, result.encryptedKey);
-        }
-      }
+  if (result) {
+
+    await sendEmergencyAlert(
+      result.emergencyId,
+      result.fileName,
+      result.aesKey
+    );
+
+    setEmergencyData({
+      emergencyId:
+        result.emergencyId,
+      aesKey:
+        result.aesKey
+    });
+
+  }
+
+}
 
     } catch (err) {
       console.log("Backend Error:", err);

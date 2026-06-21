@@ -18,20 +18,19 @@ export default function EmergencyContactsScreen({ navigation }) {
   const [loading, setLoading] = useState(true);
 
   const [isEmergency, setIsEmergency] = useState(false);
-  const [fileUrl, setFileUrl] = useState('');
-  const [encryptedKey, setEncryptedKey] = useState('');
+const [aesKey, setAesKey] = useState('');
+  const [emergencyId, setEmergencyId] = useState('');
 
   useEffect(() => {
 
     const emergency = getEmergencyData();
 
-    setFileUrl(emergency.fileUrl || '');
-    setEncryptedKey(emergency.encryptedKey || '');
+   setEmergencyId(emergency.emergencyId || '');
+setAesKey(emergency.aesKey || '');
 
-    setIsEmergency(
-      !!emergency.fileUrl && !!emergency.encryptedKey
-    );
-
+setIsEmergency(
+  !!emergency.emergencyId && !!emergency.aesKey
+);
     const loadContacts = async () => {
       try {
         const profile = await getProfile();
@@ -55,12 +54,11 @@ export default function EmergencyContactsScreen({ navigation }) {
       return;
     }
 
-    openWhatsApp(
-      contact.phone,
-      fileUrl,
-      encryptedKey
-    );
-  };
+   openWhatsApp(
+  contact.phone,
+  emergencyId,
+  aesKey
+);};
 
   return (
     <View style={styles.container}>

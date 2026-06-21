@@ -1,6 +1,6 @@
 let emergencyData = {
-  fileUrl: '',
-  encryptedKey: '',
+  emergencyId: '',
+  aesKey: '',
 };
 
 export const setEmergencyData = (data) => {
@@ -13,7 +13,7 @@ export const getEmergencyData = () => {
 
 export const clearEmergencyData = () => {
   emergencyData = {
-    fileUrl: '',
-    encryptedKey: '',
+    emergencyId: '',
+    aesKey: '',
   };
 };

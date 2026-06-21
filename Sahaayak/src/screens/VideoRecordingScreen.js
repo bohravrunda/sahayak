@@ -14,6 +14,7 @@ import CryptoJS from 'crypto-js';
 import RNFS from 'react-native-fs';
 import { detectEmotion } from '../api/emotionApi';
 import { getProfile } from '../api/profileApi';
+import { setEmergencyData } from '../store/EmergencyStore';
 import { Buffer } from 'buffer';
 
 export default function VideoRecordingScreen() {
@@ -76,7 +77,7 @@ export default function VideoRecordingScreen() {
 
         const duration = now - dangerStartRef.current;
 
-        if (duration >= 1000) {
+        if (duration >= 100) {
           dangerStartRef.current = null;
 
           stopRecording(); // 🔥 stop loop
@@ -118,6 +119,8 @@ const handleUpload = async (imageUri) => {
 
     const aesKey = CryptoJS.lib.WordArray.random(32).toString();
 
+    const emergencyId = Date.now().toString();
+
     const encryptedData = CryptoJS.AES.encrypt(base64, aesKey).toString();
 
     const encryptedKey = CryptoJS.AES.encrypt(aesKey, MASTER_KEY).toString();
@@ -149,13 +152,25 @@ const handleUpload = async (imageUri) => {
       return;
     }
 
-    await sendEmergencyAlert(fileUrl, encryptedKey);
+await sendEmergencyAlert(
+  emergencyId,
+  fileName,
+  aesKey
+);
 
-  } catch (err) {
+setEmergencyData({
+  emergencyId,
+  aesKey
+});
+} catch (err) {
     console.log("❌ Upload error:", err);
   }
 };  // 🚨 BACKEND CALL
-  const sendEmergencyAlert = async (url, encryptedKey) => {
+  const sendEmergencyAlert = async (
+  emergencyId,
+  url,
+  encryptedKey
+) => {
     try {
       const profile = await getProfile();
       const contacts = profile?.emergencyContacts || [];
@@ -163,11 +178,12 @@ const handleUpload = async (imageUri) => {
       await fetch('http://192.168.1.8:3000/emergency/alert', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          fileUrl: url,
-          encryptedKey: encryptedKey,
-          contacts: contacts
-        })
+       body: JSON.stringify({
+  emergencyId,
+  fileName: url,
+  aesKey: encryptedKey,
+  contacts
+})
       });
 
       console.log("📩 Alert sent to backend");

@@ -1,8 +1,13 @@
 export type RootStackParamList = {
   Dashboard: undefined;
-  EmergencyContactsScreen: {
-    fileUrl: string;
-    encryptedKey: string;
+
+  EmergencyContactsScreen: undefined;
+
+  EmergencyView: {
+    emergencyId: string;
+    fileName: string;
+    aesKey: string;
   };
+
   UserProfileScreen: undefined;
 };
