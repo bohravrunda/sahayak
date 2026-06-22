@@ -141,5 +141,258 @@
       "score": 0.748120903968811
     },
     "emergency": false
+  },
+  {
+    "time": "2026-06-19 17:19:13.808571",
+    "file": "uploads/audio_6eb854124756469e98a6a3e7fc888acc.wav",
+    "text": "hello hello hello help help help help help me help me help me please help me save me i am in trouble help me help me everyone help me anyone help me please help me please help me help me help me",
+    "language": "en",
+    "sentiment": {
+      "label": "NEGATIVE",
+      "score": 0.848499596118927
+    },
+    "emergency": true
+  },
+  {
+    "time": "2026-06-21 12:15:20.355804",
+    "file": "uploads/audio_132b5d97559e49fe8a5e72eb5536ab68.wav",
+    "text": "help help me help me help me please help me im in trouble please help me please help me anyone help me save me im in trouble save me help me help me im in trouble save me save me please help me",
+    "language": "en",
+    "sentiment": {
+      "label": "NEGATIVE",
+      "score": 0.9756280183792114
+    },
+    "emergency": true
+  },
+  {
+    "time": "2026-06-21 14:53:48.925623",
+    "file": "uploads/audio_77d16c8368a04aa38f3bfe6320bab259.wav",
+    "text": "help me help me please help me save me save me help me help me help me im in trouble please help me help me im in trouble please help me please help me please help me im in trouble please save me save me im in trouble",
+    "language": "en",
+    "sentiment": {
+      "label": "NEGATIVE",
+      "score": 0.9797517657279968
+    },
+    "emergency": true
+  },
+  {
+    "time": "2026-06-21 14:57:40.357294",
+    "file": "uploads/audio_913519e0670f405ca2db1246fefeb399.wav",
+    "text": "please help me im in trouble please save me im in trouble help me help me anyone help me help help i am in trouble please help me please save me",
+    "language": "en",
+    "sentiment": {
+      "label": "NEGATIVE",
+      "score": 0.9771102666854858
+    },
+    "emergency": true
+  },
+  {
+    "time": "2026-06-21 16:39:44.629149",
+    "file": "uploads/audio_877bef98cdd64d2080df9cc9827907f2.wav",
+    "text": "help me help me please save me help me help me im in trouble please help me please help me please help me im in trouble please help me help me help me help me help me help me help me help me",
+    "language": "en",
+    "sentiment": {
+      "label": "NEGATIVE",
+      "score": 0.9736217260360718
+    },
+    "emergency": true
+  },
+  {
+    "time": "2026-06-21 17:18:09.051905",
+    "file": "uploads/audio_a8fc864252194e89b54fa653231910f6.wav",
+    "text": "help me help me please help me help me im in trouble help me help me help me please help me help me im in trouble please help me im in trouble please save me save me help me help me help me please help me im in trouble",
+    "language": "en",
+    "sentiment": {
+      "label": "NEGATIVE",
+      "score": 0.9640951156616211
+    },
+    "emergency": true
+  },
+  {
+    "time": "2026-06-22 06:16:01.218047",
+    "file": "uploads/audio_72b4bc4277af441e8a7947fbe8527f8d.wav",
+    "text": "help me help me please help me save me save me im in trouble please help me help me help me help me please help me please help me please help me please help me im in trouble help me help me help me help me help me help me help me help me help me help me help me help me help me help me help me help me help me help me help me help me help me help me help me help me help me help me help me help me help me help me help me help me help me help me help me help me help me help me help me help me help me help me help me help me help me help me help me help me help me help me help me help me help me help me help me help me",
+    "language": "en",
+    "sentiment": {
+      "label": "NEGATIVE",
+      "score": 0.9550585746765137
+    },
+    "emergency": true
+  },
+  {
+    "time": "2026-06-22 06:18:11.014454",
+    "file": "uploads/audio_d73643933d18405780b4d5cdaafefa78.wav",
+    "text": "please help me please help me im in trouble help me help me help me help me please help me please help me please help me please help me",
+    "language": "en",
+    "sentiment": {
+      "label": "NEGATIVE",
+      "score": 0.9710240960121155
+    },
+    "emergency": true
+  },
+  {
+    "time": "2026-06-22 06:28:43.274191",
+    "file": "uploads/audio_7a27e9322c374ceabd538b4addf7f9e9.wav",
+    "text": "anyone please help me please help me please help me im in trouble please save me im in trouble please help me help me help me help me im in trouble im in trouble please help me help me help me save me save me help me help",
+    "language": "en",
+    "sentiment": {
+      "label": "NEGATIVE",
+      "score": 0.9642944931983948
+    },
+    "emergency": true
+  },
+  {
+    "time": "2026-06-22 06:39:03.426420",
+    "file": "uploads/audio_51441a74db55474e919671e9e21b804a.wav",
+    "text": "help me help me help me please help me please help me please help me please help me im in trouble save me save me i am in trouble please help me please help me please help me please help me please help me anyone please help me please save me help me help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me",
+    "language": "en",
+    "sentiment": {
+      "label": "NEGATIVE",
+      "score": 0.8377565741539001
+    },
+    "emergency": true
+  },
+  {
+    "time": "2026-06-22 10:03:04.764677",
+    "file": "uploads/audio_c1bbd7dc02994bddaf9cf6bfd0493697.wav",
+    "text": "help help help help save me save me save me please save me help me help me help me please call the police call the police help help help help save me save me help me help me help help help help help help help help help help help help help help help help help help help help help help help help help help help help help help help help help help help help help help help help help help help help help help help help help help help help help help help help help help help help help help help help help help help help help help help help help help help help help help help help help help",
+    "language": "en",
+    "sentiment": {
+      "label": "NEGATIVE",
+      "score": 0.9775880575180054
+    },
+    "emergency": true
+  },
+  {
+    "time": "2026-06-22 10:10:01.272289",
+    "file": "uploads/audio_28d414ff9030423daa3fc63a264524b8.wav",
+    "text": "\u0925\u093e richt\u0947 \u0926\u0947\u0917\u093e\u0964",
+    "language": "mr",
+    "sentiment": {
+      "label": "NEGATIVE",
+      "score": 0.8241816163063049
+    },
+    "emergency": false
+  },
+  {
+    "time": "2026-06-22 10:10:05.766990",
+    "file": "uploads/audio_6d52331a56424e2aaf89bc22b2640f36.wav",
+    "text": "you you",
+    "language": "en",
+    "sentiment": {
+      "label": "POSITIVE",
+      "score": 0.9995699524879456
+    },
+    "emergency": false
+  },
+  {
+    "time": "2026-06-22 10:13:59.299968",
+    "file": "uploads/audio_d5151ed3fb5d42ce991010d2efcec65d.wav",
+    "text": "\u092c\u091a\u093e\u0913 \u092c\u091a\u093e\u0913 \u092e\u0941\u091d\u0947 \u092e\u0926 \u4e0d\u8981c\u094d\u092f\u093e\u0938 \u0964 \u092d\u0924\u093e\u0917\u0947il\u00e0 \uc5ed\uc2dc \u092e\u0926\u0926\u094d\u092f\u093e\u0938 \u6709\u094d\u0932\u0947",
+    "language": "hi",
+    "sentiment": {
+      "label": "NEGATIVE",
+      "score": 0.7710713744163513
+    },
+    "emergency": true
+  },
+  {
+    "time": "2026-06-22 10:19:50.530401",
+    "file": "uploads/audio_3d39a741baef4f3bb83c7c81b200f584.wav",
+    "text": "\u092c\u091a\u093e\u0901 \u092c\u091a\u093e\u0901 \u092c\u091a\u093e\u0901 \u092c\u091a\u093e\u0901 \u092c\u091a\u093e\u0901 \u092e\u0926\u091f \u0915\u0930\u094b \u092e\u0947\u0930\u0940 \u092e\u0926\u091f \u0915\u0930\u094b \u0915\u094b\u0908 \u092c\u091a\u093e\u0901 \u092e\u0941\u091d\u0947",
+    "language": "hi",
+    "sentiment": {
+      "label": "NEGATIVE",
+      "score": 0.8223233819007874
+    },
+    "emergency": false
+  },
+  {
+    "time": "2026-06-22 10:25:03.952422",
+    "file": "uploads/audio_5d24176bfe3a4a7a9d3e06b6f0ed95fb.wav",
+    "text": "\u092c\u091a\u093e\u0913 \u092c\u091a\u093e\u0913 \u092c\u091a\u093e\u0913 \u092e\u0926\u0926 \u0915\u0930\u094b \u092e \u9019\u500b\u0908 \u092a\u0942\u0932\u0940\u091c \u092a\u0942\u0932\u093e\u0913 \u092a\u0942\u0932\u0940\u091c \u0915\u094b \u092c\u093f\u0932\u093e\u0913 \u092c\u091a\u093e\u091306 33",
+    "language": "hi",
+    "sentiment": {
+      "label": "NEGATIVE",
+      "score": 0.837336003780365
+    },
+    "emergency": true
+  },
+  {
+    "time": "2026-06-22 10:28:52.526761",
+    "file": "uploads/audio_63cb7781151c422489cf9f0bb9b409cc.wav",
+    "text": "",
+    "language": "hi",
+    "sentiment": {
+      "label": "POSITIVE",
+      "score": 0.748120903968811
+    },
+    "emergency": false
+  },
+  {
+    "time": "2026-06-22 10:39:56.775951",
+    "file": "uploads/audio_e0f8f0deff8f4ce2812c8d83486a2cbb.wav",
+    "text": "\u092e\u0926\u0926 \u0915\u0930\u094b \u092e\u0947\u0930\u0940 \u0915\u094b\u0908 \u0938\u093e\u0939\u0908\u0924\u093e \u0915\u0930\u094b \u092c\u091a\u093e\u0942 \u0924\u093e\u0932\u0964",
+    "language": "hi",
+    "sentiment": {
+      "label": "NEGATIVE",
+      "score": 0.6403272151947021
+    },
+    "emergency": true
+  },
+  {
+    "time": "2026-06-22 11:07:11.876524",
+    "file": "uploads/audio_300dc5708e8641b5a7bb4665370c83e3.wav",
+    "text": "\u0924\u0936\u092c \u0928\u0939\u0940 \u0916\u0947\u0932\u0930\u0947\u0964 \u0921\u093c\u0915\u094b\u091f\u0938\u0928\u0902 \u0932\u0947\u0917\u0947\u0964 \u0915\u092e\u093e\u0938 \u0932\u0947\u0902\u0917\u0940 \u0926\u0947\u0928\u093e",
+    "language": "mr",
+    "sentiment": {
+      "label": "NEGATIVE",
+      "score": 0.849128782749176
+    },
+    "emergency": false
+  },
+  {
+    "time": "2026-06-22 11:07:49.966533",
+    "file": "uploads/audio_cc958dae62d94cefb64b94e5b821cbe8.wav",
+    "text": "\u0924\u093e\u0907\u092e \u0932\u0917\u0924\u093e \u0939\u0948\u0964 help help help help please save me save me save me help me help me please somebody call the police help me help me help help help help help help",
+    "language": "hi",
+    "sentiment": {
+      "label": "NEGATIVE",
+      "score": 0.9878963232040405
+    },
+    "emergency": true
+  },
+  {
+    "time": "2026-06-22 11:08:08.887602",
+    "file": "uploads/audio_ec763259c9674b03872aee1c27c88f0a.wav",
+    "text": "you you you",
+    "language": "en",
+    "sentiment": {
+      "label": "POSITIVE",
+      "score": 0.9993935823440552
+    },
+    "emergency": false
+  },
+  {
+    "time": "2026-06-22 11:08:44.713017",
+    "file": "uploads/audio_1aca418d1d7e42e9bcc47ce14876e173.wav",
+    "text": "",
+    "language": "en",
+    "sentiment": {
+      "label": "POSITIVE",
+      "score": 0.748120903968811
+    },
+    "emergency": false
+  },
+  {
+    "time": "2026-06-22 11:12:31.743978",
+    "file": "uploads/audio_0170607c494a40658dc5cd8ffec2b887.wav",
+    "text": "\u0935\u0926\u094b\u0917\u0941\u092a\u093e\u0902\u091a\u094d\u092f\u0928 \u0906\u092a \u0932\u094b\u0917\u092d\u093e\u0930\u0964 \u0905\u0927\u094d\u0932\u0947 \u0924\u094d\u092f\u092e\u094d\u092e \u092e\u094b\u0921\u093f\u0932\u094d\u091c\u0964 \u091a\u093e\u0930 \u0939\u0948\u0902\u0964 \u0905\u0921\u093f\u092f\u094b\u0935\u0940\u0926\u093f\u092f\u094b\u092f\u0947 \u0938\u093e\u0907\u0930\u0924\u094d\u091f\u093e\u0902 \u0909\u092a\u0928\u093e \u0928\u093e\u0902\u0917 \u0906\u092a\u094d\u0928\u0947 \u0906\u092a \u092f\u0947 \u0938\u093e\u0907\u0930\u0924\u094d\u091f\u093e\u0902 \u0909\u092a\u0928\u093e \u0928\u093e\u0902\u0917 \u0906\u092a",
+    "language": "hi",
+    "sentiment": {
+      "label": "NEGATIVE",
+      "score": 0.8050109148025513
+    },
+    "emergency": false
   }
 ]
