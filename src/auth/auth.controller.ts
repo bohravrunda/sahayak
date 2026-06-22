@@ -50,6 +50,11 @@ export class AuthController {
       throw new HttpException('Google login failed', HttpStatus.BAD_REQUEST);
     }
   }
+  // ---------------- LOGOUT ----------------
+@Post('logout')
+async logout() {
+  return this.authService.logout();
+}
 
   // ---------------- SIGNUP ----------------
   @Post('signup')
@@ -106,3 +111,4 @@ export class AuthController {
     return this.authService.resetPassword(dto.email, dto.newPassword);
   }
 }
+

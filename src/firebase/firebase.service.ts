@@ -58,6 +58,106 @@
 // }
 
 
+
+
+
+// import * as admin from 'firebase-admin';
+// import { Injectable, OnModuleInit } from '@nestjs/common';
+// import * as fs from 'fs';
+// import * as path from 'path';
+
+// @Injectable()
+// export class FirebaseService implements OnModuleInit {
+//   public firestore!: admin.firestore.Firestore;
+
+//   onModuleInit() {
+//     if (admin.apps.length) {
+//       this.firestore = admin.firestore();
+//       return;
+//     }
+
+//     let credentials: admin.ServiceAccount;
+
+//     if (
+//       process.env.FIREBASE_PROJECT_ID &&
+//       process.env.FIREBASE_CLIENT_EMAIL &&
+//       process.env.FIREBASE_PRIVATE_KEY
+//     ) {
+//       credentials = {
+//         projectId: process.env.FIREBASE_PROJECT_ID,
+//         clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+//         privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+//       };
+//     } else {
+//       const filePath = path.resolve(
+//         process.env.FIREBASE_SERVICE_ACCOUNT || './firebase-admin.json',
+//       );
+
+//       credentials = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+//     }
+
+//     admin.initializeApp({
+//       credential: admin.credential.cert(credentials),
+//     });
+
+//     this.firestore = admin.firestore();
+//   }
+
+//   async sendNotification(
+//     token: string,
+//     emergencyId: string,
+//     aesKey: string,
+//   ) {
+
+//     const viewLink =
+//       `http://192.168.1.8:3000/emergency/view/${emergencyId}`;
+
+//     const message =
+// `🚨 Emergency Alert!
+
+// User may be in danger.
+
+// Open:
+// ${viewLink}
+
+// Decrypt key:
+// ${aesKey}`;
+
+//     return admin.messaging().send({
+
+//       token,
+
+//       notification: {
+//         title: '🚨 Emergency Alert',
+//         body: 'User may be in danger!',
+//       },
+
+//       data: {
+//         emergencyId: String(emergencyId),
+//         aesKey: String(aesKey),
+//         message: message,
+//       },
+
+//       android: {
+//         priority: 'high',
+//         notification: {
+//           sound: 'default',
+//         },
+//       },
+//     });
+//   }
+// }
+
+
+
+
+
+
+
+
+
+
+
 import * as admin from 'firebase-admin';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import * as fs from 'fs';
@@ -106,10 +206,9 @@ export class FirebaseService implements OnModuleInit {
     aesKey: string,
   ) {
 
-    const viewLink =
-      `http://192.168.1.8:3000/emergency/view/${emergencyId}`;
+    const viewLink = `http://10.205.27.41:3000/emergency/view/${emergencyId}`;
 
-    const message =
+    const message = 
 `🚨 Emergency Alert!
 
 User may be in danger.
@@ -121,20 +220,16 @@ Decrypt key:
 ${aesKey}`;
 
     return admin.messaging().send({
-
       token,
-
       notification: {
         title: '🚨 Emergency Alert',
         body: 'User may be in danger!',
       },
-
       data: {
         emergencyId: String(emergencyId),
         aesKey: String(aesKey),
         message: message,
       },
-
       android: {
         priority: 'high',
         notification: {

@@ -338,6 +338,16 @@ async verifyGoogleToken(idToken: string) {
     return { ok: true, message: 'OTP verified successfully.' };
   }
 
+
+  
+// --------------------- LOGOUT ---------------------
+async logout() {
+  return {
+    ok: true,
+    message: 'Logout successful',
+  };
+}
+
   // --------------------- RESET PASSWORD ---------------------
   async resetPassword(email: string, newPassword: string) {
     const db = this.firebase.firestore;
@@ -364,5 +374,4 @@ async verifyGoogleToken(idToken: string) {
     return { ok: true, message: 'Password reset successful.' };
   }
 }
-
 
