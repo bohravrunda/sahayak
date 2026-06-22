@@ -175,7 +175,7 @@ setEmergencyData({
       const profile = await getProfile();
       const contacts = profile?.emergencyContacts || [];
 
-      await fetch('http://192.168.1.8:3000/emergency/alert', {
+      await fetch('http://10.205.27.41:3000/emergency/alert', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
        body: JSON.stringify({

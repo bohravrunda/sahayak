@@ -5,10 +5,12 @@ import { login, googleLogin } from "../api/authApi";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { configureGoogleSignIn } from '../config/googleConfig';
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   // Google Sign-in config
   useEffect(() => {
@@ -110,23 +112,34 @@ const handleGoogleLogin = async () => {
     <View style={styles.container}>
       <Text style={styles.title}>Login to Sahaayak</Text>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        placeholderTextColor="#999"
-        value={email}
-        onChangeText={setEmail}
-      />
+<TextInput
+  style={styles.input}
+  placeholder="Email"
+  placeholderTextColor="#999"
+  value={email}
+  onChangeText={setEmail}
+/>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        placeholderTextColor="#999"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
+<View style={styles.passwordContainer}>
+  <TextInput
+    style={styles.passwordInput}
+    placeholder="Password"
+    placeholderTextColor="#999"
+    value={password}
+    onChangeText={setPassword}
+    secureTextEntry={!showPassword}
+  />
 
+  <TouchableOpacity
+    onPress={() => setShowPassword(!showPassword)}
+  >
+    <Ionicons
+      name={showPassword ? 'eye-off' : 'eye'}
+      size={24}
+      color="#777"
+    />
+  </TouchableOpacity>
+</View>
       <TouchableOpacity style={styles.loginBtn} onPress={handleLogin}>
         <Text style={styles.loginText}>Login</Text>
       </TouchableOpacity>
@@ -172,6 +185,33 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ddd',
   },
+
+  passwordContainer: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  borderWidth: 1,
+  borderColor: colors.gray,
+  borderRadius: 10,
+  backgroundColor: colors.white,
+  paddingHorizontal: 12,
+  marginBottom: 15,
+},
+
+passwordInput: {
+  flex: 1,
+  paddingVertical: 12,
+    color: '#000',      // 🔥 Password text black
+
+},
+input: {
+  borderWidth: 1,
+  borderColor: colors.gray,
+  borderRadius: 10,
+  padding: 12,
+  marginBottom: 15,
+  backgroundColor: colors.white,
+  color: '#000',          // ← typed text black
+},
   googleIcon: { width: 24, height: 24, marginRight: 10 },
   googleText: { fontSize: 16, color: '#000', fontWeight: '500' },
 

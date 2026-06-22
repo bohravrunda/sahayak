@@ -10,6 +10,11 @@ import {
   Modal,
 } from 'react-native';
 import colors from '../styles/colors';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { logout } from '../api/authApi';
+
+
 
 export default function DashboardScreen({ navigation }) {
   const [searchQuery, setSearchQuery] = useState('');
@@ -27,17 +32,38 @@ export default function DashboardScreen({ navigation }) {
     { id: 3, activity: 'Video evidence uploaded', time: '2 days ago', icon: '📹' },
   ];
 
-  const handleLogout = () => {
-    Alert.alert(
-      'Logout',
-      'Are you sure you want to logout?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Logout', onPress: () => navigation.navigate('Home') },
-      ]
-    );
-  };
+const handleLogout = () => {
+  Alert.alert(
+    "Logout",
+    "Are you sure you want to logout?",
+    [
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+      {
+        text: "Logout",
+        style: "destructive",
+        onPress: async () => {
+          try {
+            await logout();
 
+            // Google account logout
+            await GoogleSignin.signOut();
+
+            // Remove local data
+            await AsyncStorage.clear();
+
+            navigation.replace("Login");
+
+          } catch (err) {
+            console.log("Logout Error:", err);
+          }
+        },
+      },
+    ]
+  );
+};
   const handleSOSAlert = () => {
     Alert.alert(
       'SOS ALERT',
@@ -158,7 +184,9 @@ export default function DashboardScreen({ navigation }) {
                 }}
               >
                 <Text style={styles.sidebarItemIcon}>🚪</Text>
-                <Text style={styles.logoutSidebarText}>Logout</Text>
+<TouchableOpacity onPress={handleLogout}>
+  <Text>Logout</Text>
+</TouchableOpacity>                
               </TouchableOpacity>
             </ScrollView>
           </View>

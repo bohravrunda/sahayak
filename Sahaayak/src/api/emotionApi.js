@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Flask / ML API
-const ML_API_URL = 'http://192.168.1.8:5000/predict';
+const ML_API_URL = 'http://10.205.27.41:5000/predict';
 
 // Backend API
 const BASE_URL = 'http://192.168.1.12:3000';

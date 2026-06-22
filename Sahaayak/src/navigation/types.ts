@@ -7,6 +7,9 @@ export type RootStackParamList = {
     emergencyId: string;
     fileName: string;
     aesKey: string;
+    
+    // 🔥 Dynamic discriminator to verify decrypted render layouts
+    type: 'audio' | 'image';
   };
 
   UserProfileScreen: undefined;

@@ -1,7 +1,8 @@
 import axios from "axios";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const API = axios.create({
-  baseURL: "http://192.168.1.8:3000/auth",
+  baseURL: "http://10.205.27.41:3000/auth",
   timeout: 10000,
 });
 
@@ -97,6 +98,23 @@ export const resetPassword = async (token, newPassword) => {
     return res.data;
   } catch (err) {
     return handleError(err, "Password reset failed");
+  }
+};
+
+
+export const logout = async () => {
+  try {
+    await fetch('http://10.205.27.41:3000/auth/logout', {
+      method: 'POST',
+    });
+
+    await AsyncStorage.removeItem('token');
+    await AsyncStorage.removeItem('user');
+
+    return true;
+  } catch (err) {
+    console.log('Logout error:', err);
+    return false;
   }
 };
 
