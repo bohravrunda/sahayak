@@ -48,6 +48,7 @@ export default function SetPasswordScreen({ route, navigation }) {
         <TextInput
           style={styles.input}
           placeholder="Password"
+          placeholderTextColor="#888" // 🔥 Placeholder color fix
           secureTextEntry={!showPass}
           value={password}
           onChangeText={setPass}
@@ -62,6 +63,7 @@ export default function SetPasswordScreen({ route, navigation }) {
         <TextInput
           style={styles.input}
           placeholder="Confirm Password"
+          placeholderTextColor="#888" // 🔥 Placeholder color fix
           secureTextEntry={!showConfirm}
           value={confirmPassword}
           onChangeText={setConfirm}
@@ -108,7 +110,8 @@ const styles = StyleSheet.create({
 
   input: {
     flex: 1,
-    paddingVertical: 12
+    paddingVertical: 12,
+    color: '#000000' // 🔥 Typed text ka color black kar diya
   },
 
   btn: {

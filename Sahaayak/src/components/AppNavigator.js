@@ -1,6 +1,7 @@
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { navigationRef } from "../navigation/RootNavigation"; 
 
 // ============ AUTH SCREENS ============
 import WelcomeScreen from "../screens/WelcomeScreen";
@@ -40,7 +41,7 @@ const Stack = createNativeStackNavigator();
 
 export default function AppNavigator() {
   return (
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef}>
       <Stack.Navigator
         initialRouteName="Welcome"
         screenOptions={{ headerShown: false }}
@@ -73,8 +74,14 @@ export default function AppNavigator() {
         <Stack.Screen name="AudioRecording" component={AudioRecordingScreen} />
         <Stack.Screen name="VideoRecording" component={VideoRecordingScreen} />
         <Stack.Screen name="RecordingsList" component={RecordingsListScreen} />
-        <Stack.Screen name="AudioRecordings" component={AudioRecordingsScreen} />
+        
+        <Stack.Screen name="Recordings" component={AudioRecordingsScreen} /> 
+        
+        {/* 🔥 REGISTERED METADATA FOR VIDEO DASHBOARD */}
         <Stack.Screen name="VideoRecordings" component={VideoRecordingsScreen} />
+
+        {/* 🤫 SAFETY ALIAS: Agar code ya kisi notification payload me purana name 'Videos' chhut gaya hoga, toh bhi app crash nahi hogi aur seedhe open ho jayegi! */}
+        <Stack.Screen name="Videos" component={VideoRecordingsScreen} />
 
         {/* ---------- SAFETY ---------- */}
         <Stack.Screen name="EmergencyContacts" component={EmergencyContactsScreen} />

@@ -14,7 +14,17 @@ export default function SignupEmailScreen({navigation}){
   const res = await signup(name,email);
 
   if(res.ok){
-   navigation.navigate("SignupOtp",{email});
+   // 🔥 Yahan par normal alert pop-up daal diya hai
+   Alert.alert(
+    "OTP Sent", 
+    `An OTP has been successfully sent to ${email}`,
+    [
+      { 
+        text: "OK", 
+        onPress: () => navigation.navigate("SignupOtp",{email}) // OK click karne par hi navigate hoga
+      }
+    ]
+   );
   } else{
    Alert.alert("Error",res.message || "Failed to send OTP");
   }
@@ -27,6 +37,7 @@ export default function SignupEmailScreen({navigation}){
    <TextInput 
      style={styles.input} 
      placeholder="Full Name" 
+     placeholderTextColor="#888"
      value={name} 
      onChangeText={setName}
    />
@@ -34,6 +45,7 @@ export default function SignupEmailScreen({navigation}){
    <TextInput 
      style={styles.input} 
      placeholder="Email" 
+     placeholderTextColor="#888"
      value={email} 
      onChangeText={setEmail}
      keyboardType="email-address"
@@ -47,5 +59,13 @@ export default function SignupEmailScreen({navigation}){
 const styles=StyleSheet.create({
  container:{flex:1,justifyContent:'center',padding:20,backgroundColor:colors.background},
  title:{fontSize:24,fontWeight:'bold',marginBottom:20,color:colors.primary,textAlign:'center'},
- input:{borderWidth:1,borderColor:colors.gray,borderRadius:8,padding:10,marginBottom:20,backgroundColor:colors.white}
+ input:{
+   borderWidth:1,
+   borderColor:colors.gray,
+   borderRadius:8,
+   padding:10,
+   marginBottom:20,
+   backgroundColor:colors.white,
+   color: '#000000'
+ }
 });

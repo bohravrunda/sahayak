@@ -43,6 +43,7 @@ export default function OtpScreen({ route, navigation }) {
       <TextInput
         style={styles.input}
         placeholder="Enter OTP"
+        placeholderTextColor="#888" // 🔥 Placeholder color fix
         keyboardType="numeric"
         value={otp}
         onChangeText={setOtp}
@@ -73,6 +74,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 10,
     marginBottom: 20,
-    backgroundColor: colors.white
+    backgroundColor: colors.white,
+    color: '#000000' // 
   }
 });

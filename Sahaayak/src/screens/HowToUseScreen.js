@@ -2,46 +2,64 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import colors from '../styles/colors';
 
+// Language Context Integration
+import { useLanguage } from './../context/LanguageContext';
+
 export default function HowToUseScreen({ navigation }) {
+  const { text } = useLanguage(); // Language context variables extract kiye
+
   return (
     <View style={styles.container}>
+      {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={styles.backButton}>← Back</Text>
+          <Text style={styles.backButton}>{text.back || "← Back"}</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>How to Use</Text>
+        <Text style={styles.headerTitle}>{text.howToUseTitle || "How to Use Sahaayak"}</Text>
       </View>
 
       <ScrollView style={styles.content}>
+        {/* 🚨 Emergency Alert & Siren Section */}
         <Section
-          title="🚨 Emergency Alert"
-          description="Press the power button 3 times quickly to trigger an emergency alert. This will send your location to emergency contacts and start recording."
+          title={text.secSirenTitle || "🚨 Emergency Siren & SOS"}
+          description={text.secSirenDesc || "• Phone Shake: Shaking your phone firmly once will instantly trigger a loud panic siren. Shaking it a second time will turn the siren off.\n• SOS Button: Pressing the SOS button on the dashboard will immediately sound the siren and initiate background processing."}
         />
+
+        {/* 🎙️ Audio Monitoring Section */}
         <Section
-          title="📍 Location Sharing"
-          description="Your location is automatically shared with emergency contacts when you trigger an alert. Make sure location permissions are enabled."
+          title={text.secAudioTitle || "🎙️ Smart Audio Monitoring"}
+          description={text.secAudioDesc || "The app monitors audio in the background using short 4-second chunks, followed by a 15-second break to optimize processing. If any vocal distress or specific emergency keywords (such as 'Help', 'बचाओ', or 'वाचवा मला') are detected during active monitoring, an encrypted audio file along with your live location will be shared immediately with your emergency contacts."}
         />
+
+        {/* 🎬 Video Evidence Monitoring */}
         <Section
-          title="🎙️ Audio Recording"
-          description="Start audio recording from the dashboard or sidebar. Recordings are saved automatically and can be accessed from the Recordings section."
+          title={text.secVideoTitle || "🎬 Video Evidence Monitoring"}
+          description={text.secVideoDesc || "The camera continuously analyzes frames during monitoring sessions. If any structural danger, panic expression, or suspicious activity is flagged by the AI analyzer, the system automatically captures encrypted frames and fetches your live location to dispatch immediate alerts."}
         />
+
+        {/* 📍 Location Sharing Section */}
         <Section
-          title="🎬 Video Recording"
-          description="Capture video evidence during emergencies. Videos are stored securely and can be shared with authorities if needed."
+          title={text.secLocationTitle || "📍 Automatic Location Sharing"}
+          description={text.secLocationDesc || "Whenever an emergency is triggered (via Audio detection, Video detection, or the SOS button), your accurate GPS coordinates are fetched in the background and attached as a maps link within the alert. Please ensure that location permissions are set to 'Allow all the time' for seamless functionality."}
         />
+
+        {/* 📞 Emergency Contacts Section */}
         <Section
-          title="📞 Emergency Contacts"
-          description="Add trusted contacts who will be notified during emergencies. They will receive your location and can access your recordings."
+          title={text.secContactsTitle || "📞 Emergency Contacts (FCM Alerts)"}
+          description={text.secContactsDesc || "Configure your trusted contacts via the profile management section. When an alert is fired, they will receive high-priority push notifications containing your real-time tracking link and the unique decryption key (AES Key) required to view the secure evidence stream."}
         />
+
+        {/* ⚙️ Custom Settings */}
         <Section
-          title="⚙️ Settings"
-          description="Customize alert modes, trigger preferences, and auto-sharing options from the Settings menu."
+          title={text.secCustomTitle || "⚙️ Custom Settings"}
+          description={text.secCustomDesc || "Navigate to the Settings menu to customize shake sensitivity thresholds, toggle automated sharing layers, or adjust default monitoring parameters according to your environment."}
         />
       </ScrollView>
     </View>
   );
 }
 
+// Reusable Section Component
 function Section({ title, description }) {
   return (
     <View style={styles.section}>
@@ -54,21 +72,21 @@ function Section({ title, description }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: colors.background || '#F5F7FB',
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 20,
-    backgroundColor: colors.primary,
+    backgroundColor: colors.primary || '#6C63FF',
   },
   backButton: {
-    color: colors.white,
+    color: colors.white || '#FFFFFF',
     fontSize: 18,
     marginRight: 15,
   },
   headerTitle: {
-    color: colors.white,
+    color: colors.white || '#FFFFFF',
     fontSize: 20,
     fontWeight: 'bold',
   },
@@ -77,21 +95,25 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   section: {
-    backgroundColor: colors.white,
+    backgroundColor: colors.white || '#FFFFFF',
     padding: 20,
     borderRadius: 10,
     marginBottom: 15,
     elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 1.41,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: colors.text,
+    color: colors.text || '#333333',
     marginBottom: 10,
   },
   sectionDescription: {
-    fontSize: 16,
-    color: colors.gray,
+    fontSize: 15,
+    color: colors.gray || '#666666',
     lineHeight: 24,
   },
 });

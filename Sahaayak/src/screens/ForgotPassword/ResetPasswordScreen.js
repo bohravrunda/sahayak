@@ -1,9 +1,6 @@
-// src/screens/ResetPasswordScreen.js
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import colors from '../../styles/colors';
-
-
 
 export default function ResetPasswordScreen({ navigation }) {
   const [password, setPassword] = useState('');
@@ -19,7 +16,7 @@ export default function ResetPasswordScreen({ navigation }) {
       <TextInput
         style={styles.input}
         placeholder="Password"
-        placeholderTextColor={colors.gray}
+        placeholderTextColor="#bbb"
         secureTextEntry
         value={password}
         onChangeText={setPassword}
@@ -28,7 +25,7 @@ export default function ResetPasswordScreen({ navigation }) {
       <TextInput
         style={styles.input}
         placeholder="Confirm Password"
-        placeholderTextColor={colors.gray}
+        placeholderTextColor="#bbb"
         secureTextEntry
         value={confirm}
         onChangeText={setConfirm}
@@ -36,7 +33,7 @@ export default function ResetPasswordScreen({ navigation }) {
 
       <TouchableOpacity
         style={styles.button}
-        onPress={() => navigation.navigate('Login')}
+        onPress={() => navigation.navigate('Login')} // Perfectly Matched 👍
       >
         <Text style={styles.buttonText}>Save Password</Text>
       </TouchableOpacity>
@@ -45,40 +42,16 @@ export default function ResetPasswordScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.tealDark,
-    justifyContent: 'center',
-    padding: 25,
-  },
-  title: {
-    fontSize: 26,
-    fontWeight: 'bold',
-    color: colors.white,
-    textAlign: 'center',
-  },
-  subtitle: {
-    color: colors.lightGray,
-    textAlign: 'center',
-    marginTop: 10,
-    marginBottom: 30,
-  },
+  container: { flex: 1, backgroundColor: colors.tealDark || '#004D40', justifyContent: 'center', padding: 25 },
+  title: { fontSize: 26, fontWeight: 'bold', color: '#fff', textAlign: 'center' },
+  subtitle: { color: '#b0bec5', textAlign: 'center', marginTop: 10, marginBottom: 30 },
   input: {
-    backgroundColor: colors.tealLight,
+    backgroundColor: colors.tealLight || '#00695C',
     borderRadius: 10,
-    color: colors.white,
+    color: '#fff',
     padding: 15,
     marginBottom: 20,
   },
-  button: {
-    backgroundColor: colors.primary,
-    borderRadius: 10,
-    paddingVertical: 15,
-  },
-  buttonText: {
-    color: colors.white,
-    textAlign: 'center',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
+  button: { backgroundColor: colors.primary, borderRadius: 10, paddingVertical: 15 },
+  buttonText: { color: '#fff', textAlign: 'center', fontWeight: 'bold', fontSize: 16 },
 });

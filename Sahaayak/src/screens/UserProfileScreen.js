@@ -140,9 +140,8 @@ export default function UserProfileScreen({ navigation, route }) {
       return;
     }
 
-    try {
+try {
       setLoading(true);
-
       const token = await getFCMToken();
 
       const updatedProfile = {
@@ -156,19 +155,19 @@ export default function UserProfileScreen({ navigation, route }) {
       if (isEditMode) {
         await updateProfile(updatedProfile);
         Alert.alert("Success", "Profile updated");
+        navigation.goBack(); // 👈 Edit mode me goBack() use karein taaki stack clean rhe aur dashboard update ho jaye
       } else {
         await createProfile(updatedProfile);
         Alert.alert("Success", "Profile created");
+        navigation.replace("Dashboard");
       }
-
-      navigation.replace("Dashboard");
     } catch {
       Alert.alert("Error", "Save failed");
     } finally {
       setLoading(false);
     }
   };
-
+  
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       {isEditMode && (

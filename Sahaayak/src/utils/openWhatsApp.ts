@@ -50,8 +50,8 @@ export const openWhatsApp = (
   phone: string,
   emergencyId: string,
   encryptedKey: string,
-  fileType?: string, // 4th Parameter
-  mapsLink?: string  // 5th Parameter
+  fileType?: string, 
+  mapsLink?: string  
 ) => {
 
   const viewLink =

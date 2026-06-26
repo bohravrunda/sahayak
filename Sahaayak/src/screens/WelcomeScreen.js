@@ -24,7 +24,7 @@ export default function WelcomeScreen({ navigation }) {
 
             <TouchableOpacity
               style={styles.registerButton}
-              onPress={() => navigation.navigate('Signup')}
+              onPress={() => navigation.navigate('SignupEmailScreen')} 
             >
               <Text style={styles.registerText}>Register</Text>
             </TouchableOpacity>
@@ -102,6 +102,6 @@ const styles = StyleSheet.create({
     color: colors.white,
     textAlign: 'center',
     paddingHorizontal: 20,
-    lineHeight: 24,
-  },
+    lineHeight: 24,
+  },
 });

@@ -430,7 +430,7 @@ export default function AudioRecordingScreen() {
 
         startRecordingLoop(); 
 
-      }, 15000);
+      }, 4000);
 
     } catch (err) {
       console.log("Recording Error:", err);

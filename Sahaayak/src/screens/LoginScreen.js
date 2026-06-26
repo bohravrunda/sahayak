@@ -152,17 +152,17 @@ const handleGoogleLogin = async () => {
         />
         <Text style={styles.googleText}>Sign in with Google</Text>
       </TouchableOpacity>
-
-      <View style={styles.linksContainer}>
-        <TouchableOpacity onPress={() => navigation.navigate('SignupEmail')}>
+<View style={styles.linksContainer}>
+        <TouchableOpacity onPress={() => navigation.navigate('SignupEmailScreen')}>
           <Text style={styles.linkText}>Register</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => navigation.navigate('Email')}>
+        <TouchableOpacity onPress={() => navigation.navigate('ForgotEmail')}> 
+          {/* 🔥 Name fix kiya: 'Email' se 'ForgotEmail' */}
           <Text style={styles.linkText}>Forgot Password?</Text>
         </TouchableOpacity>
       </View>
-    </View>
+          </View>
   );
 }
 
